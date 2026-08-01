@@ -17,7 +17,9 @@ dist/
 
 # Runtime state written by the causal-graph harness (facts.json, evidence.json,
 # deductions.json, causal_edges.json, audit_log.jsonl, pending_review.jsonl,
-# _meta.json, .lock) — not committed docs. Committed docs live directly under
-# research/<topic>/ (e.g. research/agent-reasoning-bias/*.md), not inside a
-# graph/ subdirectory, so they are unaffected by this rule.
+# _meta.json, .lock) — not committed docs. A topic's committed docs, if any,
+# would live directly under research/<topic>/, not inside a graph/
+# subdirectory, so they'd be unaffected by this rule.
 research/*/graph/
+
+docs/traces/

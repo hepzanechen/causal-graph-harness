@@ -1,106 +1,116 @@
 # Causal Graph Agent Harness
 
-An auditable fact/deduction graph plus a Bayesian-updated causal graph for
-structuring an agent's (or human's) investigation of a research question.
-It exists to counter a specific failure mode: an agent forms a verdict early
-and then only seeks evidence that confirms it. All graph mutations and the
-Bayesian math are owned by deterministic Python code, not LLM output, so the
-resulting graph is auditable and its arithmetic trustworthy regardless of
-which agent or model drove the investigation. See
-`docs/superpowers/specs/2026-08-01-causal-graph-agent-harness-design.md` for
-the full design rationale.
+**Status: prototype, still under active development.** Interfaces, storage
+format, and process may change.
 
-## Setup
+[English](#english) | [中文](#中文)
+
+---
+
+## English
+
+### Why
+
+LLM agents investigating a question tend to lock onto an early verdict and
+then only look for evidence that confirms it — instead of checking whether
+multiple factors are jointly responsible, or whether a deeper root cause
+exists behind the first plausible explanation. Research this project is
+built on ([`docs/research-motivation.md`](docs/research-motivation.md))
+found that this bias lives in *what evidence an agent chooses to look for*,
+not in how it weighs evidence once found.
+
+So instead of trusting one unstructured reasoning chain, this harness makes
+an agent externalize its investigation as an explicit graph: facts, the
+deductions built on them, and a probabilistic causal graph between them —
+with a required falsification check before any causal claim is allowed to
+become high-confidence. Full rationale in
+[`docs/superpowers/specs/2026-08-01-causal-graph-agent-harness-design.md`](docs/superpowers/specs/2026-08-01-causal-graph-agent-harness-design.md).
+
+### What it is
+
+- **Lightweight** — plain JSON/JSONL files + a handful of CLI scripts. No
+  server, no database, no agent SDK.
+- **Deterministic** — all graph mutation and Bayesian arithmetic is owned by
+  Python scripts, not LLM output, so the graph stays trustworthy regardless
+  of which model drove the investigation.
+- **Portable across agents** — works with any coding agent that can read a
+  repo and run shell commands. [`AGENTS.md`](AGENTS.md) is the agent-neutral
+  entrance point; Claude Code additionally auto-discovers it as a skill.
+- **Optional pipeline** — a simple question can stop at one or two facts.
+  The full fact → deduction → causal-edge → Bayesian-update flow is there
+  for when a question actually needs it, not forced on every use.
+
+### Quick start
 
 ```bash
 pip install -e .
-pip install pytest   # only needed to run the test suite
+python scripts/add_fact.py --topic my-topic --statement "..." \
+  --evidence-id <id> --confidence verified
 ```
 
-Requires Python >= 3.10.
+That's a complete, legitimate use on its own. For the full process — evidence
+adapters, proposing deductions and causal edges, Bayesian updates, the
+falsification-gate retry pattern, and the review queue — read
+[`AGENTS.md`](AGENTS.md).
 
-**Environment quirk:** in some sandboxes `pytest` isn't on `PATH` correctly
-after install. If plain `pytest` doesn't work, run it as a module with user
-site-packages disabled instead:
+### Status
+
+This is an early prototype. First real-world validation run (two fresh,
+empty-context agents — one bare, one using this harness — independently
+diagnosing real bugs in an external codebase) is written up in
+[`docs/experiments/`](docs/experiments/). Small sample size; treat as an
+early, positive signal, not a benchmark.
+
+### License
+
+[MIT](LICENSE)
+
+---
+
+## 中文
+
+### 为什么做这个
+
+LLM agent 在调查问题时，往往会很快锁定一个"结论"，然后只去找支持这个结论的证据——
+而不是去检查是否有多个因素共同起作用，或者第一个看似合理的解释背后是否还有更深层的
+根本原因。这个项目所依据的调研（见
+[`docs/research-motivation.md`](docs/research-motivation.md)）发现，这种偏差出现在
+**agent 选择去找什么证据**这一步，而不是它拿到证据后怎么权衡证据。
+
+所以这个 harness 不再信任一条不透明的推理链，而是强制 agent 把调查过程显式地外化成一张图：
+事实（facts）、基于事实的推断（deductions）、以及它们之间带概率的因果图（causal graph）——
+并且要求任何因果结论在被判定为"高置信度"之前，必须先记录一次证伪检查。完整设计动机见
+[`docs/superpowers/specs/2026-08-01-causal-graph-agent-harness-design.md`](docs/superpowers/specs/2026-08-01-causal-graph-agent-harness-design.md)。
+
+### 这是什么
+
+- **轻量级** — 纯 JSON/JSONL 文件加几个 CLI 脚本，没有服务、没有数据库、不依赖任何 agent SDK。
+- **确定性** — 所有的图变更和贝叶斯计算都由 Python 脚本负责，而不是交给 LLM 输出，所以无论
+  换哪个模型来驱动调查，图的内容都是可信的。
+- **跨 agent 通用** — 任何能读仓库、能跑 shell 命令的 coding agent 都能用。
+  [`AGENTS.md`](AGENTS.md) 是面向所有 agent 的统一入口；Claude Code 还会额外自动发现它作为
+  一个 skill。
+- **按需使用，非强制流程** — 一个简单问题只需要记一两条 fact 就够了。完整的
+  fact → deduction → causal edge → 贝叶斯更新 流程只在问题真正需要时才会用到，不会被强加。
+
+### 快速开始
 
 ```bash
-PYTHONNOUSERSITE= python3 -m pytest -v
+pip install -e .
+python scripts/add_fact.py --topic my-topic --statement "..." \
+  --evidence-id <id> --confidence verified
 ```
 
-## Golden path walkthrough
+这样就是一次完整、合法的最小用法。完整流程——证据适配器、提出 deduction 和 causal edge、
+贝叶斯更新、证伪门禁的重试模式、以及 review queue——请读 [`AGENTS.md`](AGENTS.md)。
 
-Everything is driven through the CLI scripts under `scripts/`; there is no
-separate server or daemon. Each script prints the new record's ID on success
-— capture it in a shell variable to reference in later commands. This
-sequence (2 evidence -> 2 facts -> 1 deduction -> 1 causal edge -> 2
-Bayesian updates) mirrors `tests/test_golden_scenario.py`, the one
-end-to-end scenario proven by the test suite:
+### 现状
 
-```bash
-# 1. Register evidence
-ev1=$(python scripts/add_evidence.py --topic etl --adapter internal_db \
-  --content "ETL pod OOM-killed at 02:14 UTC" --source-ref "k8s-events/etl-worker-7")
+这还是一个早期原型。第一次真实场景验证（两个全新、空上下文的 agent——一个裸跑，一个用
+这个 harness——各自独立诊断一个外部代码库里的真实 bug）的记录见
+[`docs/experiments/`](docs/experiments/)。样本量很小，请当作一个早期的正向信号，而不是
+一个基准测试结果。
 
-ev2=$(python scripts/add_evidence.py --topic etl --adapter codebase \
-  --content "memory limit cut 4Gi to 2Gi in PR #482" --source-ref "deployment.yaml:12")
+### 许可证
 
-# 2. Extract grounded facts from that evidence
-f1=$(python scripts/add_fact.py --topic etl --statement "ETL job OOM-killed at 02:14 UTC" \
-  --evidence-id "$ev1" --confidence verified)
-
-f2=$(python scripts/add_fact.py --topic etl --statement "Memory limit reduced 4Gi to 2Gi" \
-  --evidence-id "$ev2" --confidence verified)
-
-# 3. Propose a deduction supported by a fact
-d1=$(python scripts/add_deduction.py --topic etl --claim "Memory headroom shrank" \
-  --supports "fact:$f2" --logic-note "limit halved")
-
-# 4. Propose a causal edge with a neutral prior
-e1=$(python scripts/propose_causal_edge.py --topic etl --from "deduction:$d1" --to "fact:$f1" \
-  --relation-type "contributes-to" --prior 0.3)
-
-# 5. Update the edge's posterior as each piece of evidence bears on it
-python scripts/update_causal_edge.py --topic etl --edge-id "$e1" \
-  --evidence-id "$ev1" --likelihood-ratio 3.0
-python scripts/update_causal_edge.py --topic etl --edge-id "$e1" \
-  --evidence-id "$ev2" --likelihood-ratio 2.0
-```
-
-After this, `research/etl/graph/causal_edges.json` holds the edge with both
-updates applied and its posterior moved above the 0.3 prior.
-
-There are ten CLI scripts total under `scripts/`: the six used above, plus
-`revise_fact.py` and `dispute_edge.py` (corrections), and
-`review_queue.py` / `resolve_pending.py` (for items a script diverts to
-human review instead of applying automatically — e.g. an update that would
-cross a high-confidence threshold without a recorded falsification check).
-
-## Full workflow for driving agents
-
-`AGENTS.md` at the repo root is the agent-neutral entrance point: it
-documents install, the storage model, the complete step-by-step process
-(eliciting human input, gathering evidence per source, the
-falsification-gate retry pattern for high-confidence updates, working the
-review queue), and the full CLI reference. Read that for the full picture
-rather than this README — it works the same whether you're Claude Code
-(which also auto-discovers `.claude/skills/causal-graph-research/SKILL.md`,
-a thin pointer at the same content) or any other agent that can read a repo
-and run shell commands.
-
-## Adapters
-
-`adapters/` provides `CodebaseAdapter` (a real, working local-repo grep
-adapter) plus stub interfaces — `InternalDBAdapter`, `ManualDocAdapter`,
-`ExperimentResultsAdapter` — that raise until wired to a real backend.
-`external_web` and `human` are not code; they're adapter tags used when an
-agent registers evidence it gathered itself (via its own web-search tool, or
-from a human) with `add_evidence.py --adapter external_web|human`.
-
-## Where state lives
-
-Each topic's live investigation state is written to
-`research/<topic>/graph/` (`facts.json`, `evidence.json`, `deductions.json`,
-`causal_edges.json`, `audit_log.jsonl`, `pending_review.jsonl`, `_meta.json`,
-`.lock`). This is runtime output, not source — `research/*/graph/` is
-gitignored so it won't collide with committed docs that live directly under
-`research/<topic>/` (outside a `graph/` subdirectory).
+[MIT](LICENSE)

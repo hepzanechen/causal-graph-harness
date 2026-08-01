@@ -2,7 +2,7 @@
 
 Date: 2026-08-01
 Status: Approved (pending user spec review)
-Related: `research/agent-reasoning-bias/graph-based-root-cause-analysis.md`
+Related: `docs/research-motivation.md`
 
 ## Problem
 
