@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+import argparse
+import sys
+import time
+from causal_graph import bayes, review, storage
+from causal_graph.cli import current_agent_id
+from causal_graph.lock import topic_lock
+from causal_graph.schema import ValidationError, new_id, validate_likelihood_ratio
+
+
+def _needs_review(edge: dict, new_posterior: float):
+    if review.crosses_high_confidence(edge["posterior"], new_posterior) and not edge["falsification_checks"]:
+        return True, "high-confidence threshold crossed without a recorded falsification check"
+    if review.is_reversal(edge["prior"], edge["posterior"], new_posterior):
+        return True, "evidence reverses the edge's trend beyond the configured margin"
+    return False, None
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--topic", required=True)
+    p.add_argument("--edge-id", required=True, dest="edge_id")
+    p.add_argument("--evidence-id", required=True, dest="evidence_id")
+    p.add_argument("--likelihood-ratio", required=True, type=float, dest="likelihood_ratio")
+    p.add_argument("--correlated-with", default="", dest="correlated_with")
+    args = p.parse_args()
+
+    correlated_with = [c.strip() for c in args.correlated_with.split(",") if c.strip()]
+    lr = validate_likelihood_ratio(args.likelihood_ratio)
+
+    with topic_lock(args.topic):
+        storage.prepare(args.topic)
+        edges = storage.load_json_list(args.topic, "causal_edges")
+        edge = next((e for e in edges if e["id"] == args.edge_id), None)
+        if edge is None:
+            raise ValidationError(f"unknown edge id: {args.edge_id}")
+        known_evidence = {e["id"] for e in storage.load_json_list(args.topic, "evidence")}
+        if args.evidence_id not in known_evidence:
+            raise ValidationError(f"unknown evidence id: {args.evidence_id}")
+
+        new_update = {
+            "evidence_id": args.evidence_id,
+            "likelihood_ratio": lr,
+            "correlated_with": correlated_with,
+            "agent": current_agent_id(),
+            "timestamp": time.time(),
+        }
+        trial_updates = edge["updates"] + [new_update]
+        new_posterior = bayes.compute_posterior(edge["prior"], trial_updates)
+
+        needs_review, reason = _needs_review(edge, new_posterior)
+        if needs_review:
+            item = {
+                "id": new_id("rev"),
+                "kind": "causal_edge_update",
+                "edge_id": edge["id"],
+                "proposed_update": new_update,
+                "proposed_posterior": new_posterior,
+                "reason": reason,
+                "tier": "normal",
+                "created_at": time.time(),
+            }
+            storage.commit_mutation(
+                args.topic, current_agent_id(), "update_causal_edge.py", vars(args),
+                [("pending_review", item)],
+            )
+            print(f"queued for review: {item['id']} ({reason})")
+            return
+
+        edge["updates"] = trial_updates
+        edge["posterior"] = new_posterior
+        edge["last_updated"] = time.time()
+        storage.commit_mutation(
+            args.topic, current_agent_id(), "update_causal_edge.py", vars(args),
+            [("causal_edges", edge)],
+        )
+        print(edge["id"])
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except ValidationError as e:
+        print(f"error: {e}", file=sys.stderr)
+        sys.exit(1)
