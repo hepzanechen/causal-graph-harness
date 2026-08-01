@@ -1,0 +1,18 @@
+{
+  "root_causes": [
+    {"component": "promotion-service", "fault": "unbounded retries after promotion cache timeouts"}
+  ],
+  "required_chain": [
+    {"from": "promotion cache timeout", "to": "fifteen promotion retries"},
+    {"from": "fifteen promotion retries", "to": "promotion connection pool exhaustion"},
+    {"from": "promotion connection pool exhaustion", "to": "promotion calls take several seconds"},
+    {"from": "promotion calls take several seconds", "to": "checkout latency increases"}
+  ],
+  "accepted_chain": [
+    {"from": "promotion cache timeout", "to": "fifteen promotion retries"},
+    {"from": "fifteen promotion retries", "to": "promotion connection pool exhaustion"},
+    {"from": "promotion connection pool exhaustion", "to": "promotion calls take several seconds"},
+    {"from": "promotion calls take several seconds", "to": "checkout latency increases"}
+  ],
+  "critical_evidence_ids": ["ev-p03-02", "ev-p03-03", "ev-p03-04", "ev-p03-07"]
+}

@@ -1,0 +1,16 @@
+{
+  "root_causes": [
+    {"component": "payment-service", "fault": "unbounded receipt cache memory leak"}
+  ],
+  "required_chain": [
+    {"from": "unbounded receipt cache", "to": "payment-service memory exhaustion"},
+    {"from": "payment-service memory exhaustion", "to": "payment pod OOM restart"},
+    {"from": "payment pod OOM restart", "to": "checkout requests return 503"}
+  ],
+  "accepted_chain": [
+    {"from": "unbounded receipt cache", "to": "payment-service memory exhaustion"},
+    {"from": "payment-service memory exhaustion", "to": "payment pod OOM restart"},
+    {"from": "payment pod OOM restart", "to": "checkout requests return 503"}
+  ],
+  "critical_evidence_ids": ["ev-p01-02", "ev-p01-03", "ev-p01-04"]
+}

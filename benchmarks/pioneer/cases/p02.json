@@ -1,0 +1,72 @@
+{
+  "id": "p02",
+  "title": "Product pages begin returning server errors",
+  "difficulty": "straightforward",
+  "prompt": "Beginning at 09:00 UTC, product-detail pages return HTTP 500 for most requests while the storefront home page remains available. Identify the root cause and causal path.",
+  "source_types": ["logs", "secrets", "metrics", "traces"],
+  "answer_contract": {
+    "hypotheses": [{
+      "rank": "integer",
+      "root_causes": [{"component": "string", "fault": "string"}],
+      "causal_chain": [{"from": "string", "to": "string"}],
+      "confidence": "number between 0 and 1",
+      "evidence_ids": ["string"]
+    }]
+  },
+  "evidence": [
+    {
+      "id": "ev-p02-01",
+      "source_type": "logs",
+      "component": "catalog-service",
+      "timestamp": "09:00:02Z",
+      "summary": "Catalog database authentication failures begin",
+      "content": "catalog-service: SQLSTATE 28P01 authentication failed for user catalog_reader; 19 retries exhausted for GetProduct.",
+      "tags": ["authentication", "database", "error"]
+    },
+    {
+      "id": "ev-p02-02",
+      "source_type": "secrets",
+      "component": "catalog-service",
+      "timestamp": "09:00:00Z",
+      "summary": "Catalog database credential reached its expiry",
+      "content": "Secret metadata for catalog-db-reader: issued 2026-07-02T09:00Z, expires 2026-08-01T09:00Z, rotation status overdue, mounted revision 183.",
+      "tags": ["secret", "expiry", "rotation"]
+    },
+    {
+      "id": "ev-p02-03",
+      "source_type": "traces",
+      "component": "storefront",
+      "timestamp": "09:00:04Z",
+      "summary": "Product request fails in the catalog dependency",
+      "content": "Trace product-page/9af: storefront 5032 ms -> catalog GetProduct 5001 ms ERROR -> catalog-db connect ERROR authentication rejected.",
+      "tags": ["trace", "catalog", "database"]
+    },
+    {
+      "id": "ev-p02-04",
+      "source_type": "metrics",
+      "component": "catalog-service",
+      "timestamp": "09:00:00Z",
+      "summary": "Catalog error rate jumps without resource saturation",
+      "content": "catalog error rate rose to 96%; CPU remained 22%, memory 38%, and pod restarts zero.",
+      "tags": ["errors", "cpu", "healthy"]
+    },
+    {
+      "id": "ev-p02-05",
+      "source_type": "metrics",
+      "component": "catalog-database",
+      "timestamp": "09:00:00Z",
+      "summary": "Database resources and other clients remain healthy",
+      "content": "catalog database CPU 35%, storage latency 4 ms, and connections from admin and batch users succeed; only catalog_reader is rejected.",
+      "tags": ["database", "healthy", "clients"]
+    },
+    {
+      "id": "ev-p02-06",
+      "source_type": "logs",
+      "component": "storefront",
+      "timestamp": "09:00:05Z",
+      "summary": "Storefront maps catalog failures to HTTP 500",
+      "content": "storefront: GetProduct dependency failed after timeout; rendering product-detail returned status=500.",
+      "tags": ["500", "dependency", "symptom"]
+    }
+  ]
+}

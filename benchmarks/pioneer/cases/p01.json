@@ -1,0 +1,81 @@
+{
+  "id": "p01",
+  "title": "Checkout errors after a routine deployment",
+  "difficulty": "straightforward",
+  "prompt": "At 02:14 UTC checkout success fell from 99.8% to 71%. Customers see intermittent HTTP 503 responses. Identify the root cause and explain the causal path to the customer-visible symptom.",
+  "source_types": ["metrics", "logs", "events", "deployment"],
+  "answer_contract": {
+    "hypotheses": [{
+      "rank": "integer",
+      "root_causes": [{"component": "string", "fault": "string"}],
+      "causal_chain": [{"from": "string", "to": "string"}],
+      "confidence": "number between 0 and 1",
+      "evidence_ids": ["string"]
+    }]
+  },
+  "evidence": [
+    {
+      "id": "ev-p01-01",
+      "source_type": "metrics",
+      "component": "checkout-service",
+      "timestamp": "02:14:00Z",
+      "summary": "Checkout 503 rate rises abruptly",
+      "content": "checkout HTTP 503 rate rose from 0.1% to 28.7% between 02:14 and 02:18; request volume remained within the normal weekday band.",
+      "tags": ["503", "errors", "symptom"]
+    },
+    {
+      "id": "ev-p01-02",
+      "source_type": "metrics",
+      "component": "payment-service",
+      "timestamp": "02:06:00Z",
+      "summary": "Payment memory climbs until each restart",
+      "content": "payment-service RSS grew monotonically from 410 MiB at 02:06 to its 768 MiB container limit at 02:14. It reset to 190 MiB after each restart and began climbing again.",
+      "tags": ["memory", "limit", "restart"]
+    },
+    {
+      "id": "ev-p01-03",
+      "source_type": "events",
+      "component": "payment-service",
+      "timestamp": "02:14:03Z",
+      "summary": "Payment pod terminated for exceeding memory",
+      "content": "Kubernetes event: container payment in pod payment-6c7b was terminated with reason OOMKilled; restart count advanced from 0 to 1.",
+      "tags": ["oom", "kubernetes", "restart"]
+    },
+    {
+      "id": "ev-p01-04",
+      "source_type": "logs",
+      "component": "payment-service",
+      "timestamp": "02:12:41Z",
+      "summary": "Receipt cache grows without removals",
+      "content": "Diagnostic log counters show receipt_cache entries increasing from 8,120 to 94,337 while evictions remain 0. Entries persist after payment completion.",
+      "tags": ["cache", "receipt", "eviction"]
+    },
+    {
+      "id": "ev-p01-05",
+      "source_type": "deployment",
+      "component": "payment-service",
+      "timestamp": "01:58:00Z",
+      "summary": "A receipt lookup cache was enabled",
+      "content": "Release payment-service 4.18.0 enabled receipt_cache for faster duplicate-payment detection. No other checkout dependency changed in this deployment.",
+      "tags": ["release", "cache", "change"]
+    },
+    {
+      "id": "ev-p01-06",
+      "source_type": "metrics",
+      "component": "checkout-service",
+      "timestamp": "02:14:00Z",
+      "summary": "Checkout compute remains healthy",
+      "content": "checkout-service CPU stayed at 31-38%, memory at 44%, and its pods did not restart during the incident.",
+      "tags": ["cpu", "memory", "healthy"]
+    },
+    {
+      "id": "ev-p01-07",
+      "source_type": "metrics",
+      "component": "orders-database",
+      "timestamp": "02:14:00Z",
+      "summary": "Orders database is within baseline",
+      "content": "Database query p95 was 18 ms, connections 42%, CPU 27%, and error count zero throughout 02:00-02:30.",
+      "tags": ["database", "healthy", "latency"]
+    }
+  ]
+}

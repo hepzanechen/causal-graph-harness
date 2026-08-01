@@ -1,0 +1,90 @@
+{
+  "id": "p06",
+  "title": "Checkout has both timeouts and rejected orders",
+  "difficulty": "compound",
+  "prompt": "Since 13:20 UTC checkout p95 is 12 seconds and roughly 18% of orders fail. Operators suspect one shared dependency. Determine all material root causes and explain how each contributes to the incident.",
+  "source_types": ["metrics", "logs", "traces", "configuration", "database"],
+  "answer_contract": {
+    "hypotheses": [{
+      "rank": "integer",
+      "root_causes": [{"component": "string", "fault": "string"}],
+      "causal_chain": [{"from": "string", "to": "string"}],
+      "confidence": "number between 0 and 1",
+      "evidence_ids": ["string"]
+    }]
+  },
+  "evidence": [
+    {
+      "id": "ev-p06-01",
+      "source_type": "metrics",
+      "component": "checkout-service",
+      "timestamp": "13:20:00Z",
+      "summary": "Checkout shows two distinct failure populations",
+      "content": "61% of slow requests spend over 9 s in inventory Reserve; 18% of all requests fail after a 3 s payment connection timeout. The populations overlap in only 4% of traces.",
+      "tags": ["checkout", "latency", "errors"]
+    },
+    {
+      "id": "ev-p06-02",
+      "source_type": "traces",
+      "component": "payment-service",
+      "timestamp": "13:21:07Z",
+      "summary": "Failed orders cannot connect to the configured processor",
+      "content": "Trace checkout/aa1: payment Charge -> tcp connect 10.99.14.77:8443 timeout at 3.0 s -> order rejected PAYMENT_UNAVAILABLE.",
+      "tags": ["payment", "connection", "timeout"]
+    },
+    {
+      "id": "ev-p06-03",
+      "source_type": "configuration",
+      "component": "payment-service",
+      "timestamp": "13:11:00Z",
+      "summary": "Payment endpoint changed to an unused address",
+      "content": "Config revision 448 changed PROCESSOR_ENDPOINT from processor.internal:8443 to 10.99.14.77:8443. Service inventory has no endpoint registered at 10.99.14.77.",
+      "tags": ["payment", "endpoint", "configuration"]
+    },
+    {
+      "id": "ev-p06-04",
+      "source_type": "traces",
+      "component": "inventory-service",
+      "timestamp": "13:21:10Z",
+      "summary": "Slow orders wait in inventory reservation queries",
+      "content": "Trace checkout/bb2: inventory Reserve 11.4 s, including SQL SELECT reservation WHERE sku=? AND warehouse_id=? consuming 11.1 s; payment completes in 88 ms.",
+      "tags": ["inventory", "database", "latency"]
+    },
+    {
+      "id": "ev-p06-05",
+      "source_type": "database",
+      "component": "inventory-database",
+      "timestamp": "13:22:00Z",
+      "summary": "Reservation query performs a full table scan",
+      "content": "EXPLAIN shows Seq Scan on reservation, 28.4 million rows examined, because no index covers (sku, warehouse_id). Before schema revision 912 the query used reservation_sku_warehouse_idx.",
+      "tags": ["inventory", "index", "scan"]
+    },
+    {
+      "id": "ev-p06-06",
+      "source_type": "database",
+      "component": "inventory-database",
+      "timestamp": "13:08:00Z",
+      "summary": "Inventory schema migration removed the reservation index",
+      "content": "Migration 912 dropped reservation_sku_warehouse_idx while replacing an unrelated uniqueness constraint; no replacement lookup index was created.",
+      "tags": ["inventory", "migration", "index"]
+    },
+    {
+      "id": "ev-p06-07",
+      "source_type": "metrics",
+      "component": "authentication-service",
+      "timestamp": "13:20:00Z",
+      "summary": "Authentication CPU rises but remains within its SLO",
+      "content": "authentication-service CPU rose from 22% to 58% after a traffic shift; auth p95 stayed at 46 ms and no auth errors occurred.",
+      "tags": ["authentication", "cpu", "distractor"]
+    },
+    {
+      "id": "ev-p06-08",
+      "source_type": "metrics",
+      "component": "checkout-service",
+      "timestamp": "13:20:00Z",
+      "summary": "Checkout itself has spare capacity",
+      "content": "checkout CPU 32%, memory 40%, queue depth 3, and zero pod restarts. Latency is entirely within downstream spans.",
+      "tags": ["checkout", "healthy", "downstream"]
+    }
+  ]
+}

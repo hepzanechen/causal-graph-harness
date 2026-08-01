@@ -1,0 +1,21 @@
+{
+  "root_causes": [
+    {"component": "payment-service", "fault": "misconfigured processor endpoint"},
+    {"component": "inventory-service", "fault": "missing reservation lookup index"}
+  ],
+  "required_chain": [
+    {"from": "misconfigured processor endpoint", "to": "payment processor connection timeout"},
+    {"from": "payment processor connection timeout", "to": "checkout rejects orders"},
+    {"from": "missing reservation lookup index", "to": "inventory reservation full table scan"},
+    {"from": "inventory reservation full table scan", "to": "inventory calls take several seconds"},
+    {"from": "inventory calls take several seconds", "to": "checkout latency increases"}
+  ],
+  "accepted_chain": [
+    {"from": "misconfigured processor endpoint", "to": "payment processor connection timeout"},
+    {"from": "payment processor connection timeout", "to": "checkout rejects orders"},
+    {"from": "missing reservation lookup index", "to": "inventory reservation full table scan"},
+    {"from": "inventory reservation full table scan", "to": "inventory calls take several seconds"},
+    {"from": "inventory calls take several seconds", "to": "checkout latency increases"}
+  ],
+  "critical_evidence_ids": ["ev-p06-01", "ev-p06-02", "ev-p06-03", "ev-p06-04", "ev-p06-05", "ev-p06-06"]
+}

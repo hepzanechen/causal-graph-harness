@@ -1,0 +1,81 @@
+{
+  "id": "p04",
+  "title": "Profile-image operations time out",
+  "difficulty": "multi_hop",
+  "prompt": "Starting at 11:27 UTC, profile image uploads and downloads time out, while profile text updates continue to work. Find the originating fault and explain the complete failure path.",
+  "source_types": ["traces", "logs", "configuration", "metrics"],
+  "answer_contract": {
+    "hypotheses": [{
+      "rank": "integer",
+      "root_causes": [{"component": "string", "fault": "string"}],
+      "causal_chain": [{"from": "string", "to": "string"}],
+      "confidence": "number between 0 and 1",
+      "evidence_ids": ["string"]
+    }]
+  },
+  "evidence": [
+    {
+      "id": "ev-p04-01",
+      "source_type": "traces",
+      "component": "profile-service",
+      "timestamp": "11:28:12Z",
+      "summary": "Image requests stall in media-service",
+      "content": "Trace profile/upload total 10.0 s: profile validation 12 ms -> media-service PutObject 9.98 s ERROR deadline exceeded. Text-only profile traces complete in 44 ms.",
+      "tags": ["trace", "media", "timeout"]
+    },
+    {
+      "id": "ev-p04-02",
+      "source_type": "logs",
+      "component": "media-service",
+      "timestamp": "11:27:03Z",
+      "summary": "Media cannot resolve the object-store hostname",
+      "content": "media-service: lookup objects.internal on 10.70.0.53:53: i/o timeout; PutObject aborted after resolver attempts exhausted.",
+      "tags": ["dns", "lookup", "object-store"]
+    },
+    {
+      "id": "ev-p04-03",
+      "source_type": "configuration",
+      "component": "media-service",
+      "timestamp": "11:19:00Z",
+      "summary": "Media pods received a new resolver address",
+      "content": "Deployment diff changed media-service dnsConfig.nameservers from 10.70.0.10 to 10.70.0.53. No other service selected this pod-template overlay.",
+      "tags": ["dns", "configuration", "deployment"]
+    },
+    {
+      "id": "ev-p04-04",
+      "source_type": "metrics",
+      "component": "dns-resolver-10.70.0.53",
+      "timestamp": "11:27:00Z",
+      "summary": "Configured resolver address has no responding endpoint",
+      "content": "Synthetic UDP probes to 10.70.0.53:53 show 100% timeout. The active cluster resolver at 10.70.0.10 answers the same names in under 3 ms.",
+      "tags": ["dns", "probe", "timeout"]
+    },
+    {
+      "id": "ev-p04-05",
+      "source_type": "metrics",
+      "component": "object-store",
+      "timestamp": "11:27:00Z",
+      "summary": "Object storage remains healthy for other clients",
+      "content": "Object-store availability is 100%; p95 is 26 ms. Backup and document-service clients successfully resolve and access objects.internal.",
+      "tags": ["object-store", "healthy", "clients"]
+    },
+    {
+      "id": "ev-p04-06",
+      "source_type": "metrics",
+      "component": "media-service",
+      "timestamp": "11:27:00Z",
+      "summary": "Media resources are not saturated",
+      "content": "media-service CPU 18%, memory 33%, zero restarts, but outbound DNS timeout count rises from 0 to 1,940/min.",
+      "tags": ["cpu", "memory", "dns"]
+    },
+    {
+      "id": "ev-p04-07",
+      "source_type": "logs",
+      "component": "profile-database",
+      "timestamp": "11:29:00Z",
+      "summary": "Profile database reports occasional lock waits",
+      "content": "Three profile row lock waits reached 80 ms, below the 250 ms warning threshold; no transaction failed.",
+      "tags": ["database", "locks", "distractor"]
+    }
+  ]
+}

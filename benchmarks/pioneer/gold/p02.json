@@ -1,0 +1,16 @@
+{
+  "root_causes": [
+    {"component": "catalog-service", "fault": "expired catalog database credential"}
+  ],
+  "required_chain": [
+    {"from": "expired catalog database credential", "to": "database rejects catalog authentication"},
+    {"from": "database rejects catalog authentication", "to": "catalog product queries fail"},
+    {"from": "catalog product queries fail", "to": "product pages return 500"}
+  ],
+  "accepted_chain": [
+    {"from": "expired catalog database credential", "to": "database rejects catalog authentication"},
+    {"from": "database rejects catalog authentication", "to": "catalog product queries fail"},
+    {"from": "catalog product queries fail", "to": "product pages return 500"}
+  ],
+  "critical_evidence_ids": ["ev-p02-01", "ev-p02-02", "ev-p02-03"]
+}

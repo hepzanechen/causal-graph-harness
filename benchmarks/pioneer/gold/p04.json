@@ -1,0 +1,16 @@
+{
+  "root_causes": [
+    {"component": "media-service", "fault": "invalid DNS resolver configuration"}
+  ],
+  "required_chain": [
+    {"from": "invalid media-service DNS resolver", "to": "object-store hostname lookup times out"},
+    {"from": "object-store hostname lookup times out", "to": "media object requests fail"},
+    {"from": "media object requests fail", "to": "profile image operations time out"}
+  ],
+  "accepted_chain": [
+    {"from": "invalid media-service DNS resolver", "to": "object-store hostname lookup times out"},
+    {"from": "object-store hostname lookup times out", "to": "media object requests fail"},
+    {"from": "media object requests fail", "to": "profile image operations time out"}
+  ],
+  "critical_evidence_ids": ["ev-p04-01", "ev-p04-02", "ev-p04-03", "ev-p04-04"]
+}

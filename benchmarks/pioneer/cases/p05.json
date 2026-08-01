@@ -1,0 +1,81 @@
+{
+  "id": "p05",
+  "title": "Checkout CPU spike and payment failures",
+  "difficulty": "misleading",
+  "prompt": "At 18:05 UTC checkout CPU reached 94% and checkout began returning 503 responses. An initial alert identifies checkout CPU saturation as the likely cause. Investigate whether that is the root cause and provide the supported causal chain.",
+  "source_types": ["metrics", "logs", "traces", "certificates", "events"],
+  "answer_contract": {
+    "hypotheses": [{
+      "rank": "integer",
+      "root_causes": [{"component": "string", "fault": "string"}],
+      "causal_chain": [{"from": "string", "to": "string"}],
+      "confidence": "number between 0 and 1",
+      "evidence_ids": ["string"]
+    }]
+  },
+  "evidence": [
+    {
+      "id": "ev-p05-01",
+      "source_type": "metrics",
+      "component": "checkout-service",
+      "timestamp": "18:05:00Z",
+      "summary": "Checkout CPU and errors spike together",
+      "content": "checkout CPU rose from 36% to 94% at 18:05:22; 503 responses rose to 31% by 18:05:41.",
+      "tags": ["cpu", "503", "alert"]
+    },
+    {
+      "id": "ev-p05-02",
+      "source_type": "logs",
+      "component": "payment-service",
+      "timestamp": "18:04:51Z",
+      "summary": "Payment TLS handshakes fail before checkout CPU rises",
+      "content": "payment-service: x509 certificate has expired or is not yet valid while connecting to processor.internal; first occurrence 18:04:51, 31 seconds before checkout CPU saturation.",
+      "tags": ["tls", "certificate", "payment"]
+    },
+    {
+      "id": "ev-p05-03",
+      "source_type": "certificates",
+      "component": "payment-service",
+      "timestamp": "18:04:50Z",
+      "summary": "Processor certificate is outside its validity period",
+      "content": "Presented certificate CN=processor.internal, notAfter=2026-08-01T18:04:50Z; certificate automation status shows renewal job failed six hours earlier.",
+      "tags": ["certificate", "expiry", "renewal"]
+    },
+    {
+      "id": "ev-p05-04",
+      "source_type": "traces",
+      "component": "checkout-service",
+      "timestamp": "18:05:08Z",
+      "summary": "Checkout repeatedly retries failed payment calls",
+      "content": "Trace checkout/42d contains 24 payment Charge attempts, each ending TLS_HANDSHAKE_ERROR; retry loop consumes 7.4 CPU-seconds before returning 503.",
+      "tags": ["trace", "retry", "payment"]
+    },
+    {
+      "id": "ev-p05-05",
+      "source_type": "events",
+      "component": "checkout-service",
+      "timestamp": "18:12:00Z",
+      "summary": "Adding checkout capacity does not restore success",
+      "content": "Checkout replicas increased from 6 to 18. Per-pod CPU fell to 55%, but payment errors and customer 503 rate remained unchanged.",
+      "tags": ["scale", "cpu", "counterevidence"]
+    },
+    {
+      "id": "ev-p05-06",
+      "source_type": "metrics",
+      "component": "orders-database",
+      "timestamp": "18:05:00Z",
+      "summary": "Orders database remains healthy",
+      "content": "Orders database p95 21 ms, CPU 29%, connections 39%, and zero errors during the incident.",
+      "tags": ["database", "healthy"]
+    },
+    {
+      "id": "ev-p05-07",
+      "source_type": "events",
+      "component": "payment-service",
+      "timestamp": "18:19:00Z",
+      "summary": "Certificate replacement ends retries and checkout errors",
+      "content": "After payment trust material revision 992 was mounted, TLS failures stopped within 8 seconds, checkout retries returned to baseline, CPU fell to 37%, and 503 rate recovered.",
+      "tags": ["certificate", "recovery", "counterfactual"]
+    }
+  ]
+}

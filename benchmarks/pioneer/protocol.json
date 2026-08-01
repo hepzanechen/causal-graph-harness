@@ -1,0 +1,44 @@
+{
+  "suite": "causal-graph-pioneer-v1",
+  "purpose": "plumbing and behavioral smoke test; not a statistical superiority claim",
+  "case_ids": ["p01", "p02", "p03", "p04", "p05", "p06"],
+  "conditions": {
+    "baseline": {
+      "shared_prompt_only": true,
+      "causal_graph_skill": false
+    },
+    "treatment": {
+      "shared_prompt_only": true,
+      "causal_graph_skill": true,
+      "skill_path": ".claude/skills/causal-graph-research/SKILL.md"
+    }
+  },
+  "runs_per_case_per_condition": 1,
+  "limits": {
+    "wall_time_seconds": 1200,
+    "search_calls": 12,
+    "evidence_reads": 12,
+    "live_web": false
+  },
+  "shared_instruction": "Investigate the incident using only the sealed evidence broker. Identify all material root causes, explain the causal chain from each cause to the observed symptom, cite evidence IDs, and return only JSON matching answer_contract. Do not assume the first anomaly is causal.",
+  "isolation": {
+    "fresh_context_per_run": true,
+    "fresh_graph_state_per_run": true,
+    "agent_can_access_gold": false,
+    "agent_can_access_other_runs": false
+  },
+  "record": [
+    "model_snapshot",
+    "reasoning_setting",
+    "condition",
+    "case_id",
+    "started_at",
+    "finished_at",
+    "search_calls",
+    "evidence_reads",
+    "graph_cli_calls",
+    "input_tokens",
+    "output_tokens",
+    "answer"
+  ]
+}

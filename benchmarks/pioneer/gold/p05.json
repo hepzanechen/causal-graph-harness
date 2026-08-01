@@ -1,0 +1,18 @@
+{
+  "root_causes": [
+    {"component": "payment-service", "fault": "expired processor TLS certificate"}
+  ],
+  "required_chain": [
+    {"from": "expired processor TLS certificate", "to": "payment TLS handshakes fail"},
+    {"from": "payment TLS handshakes fail", "to": "checkout repeatedly retries payment"},
+    {"from": "checkout repeatedly retries payment", "to": "checkout CPU saturation"},
+    {"from": "checkout CPU saturation", "to": "checkout requests return 503"}
+  ],
+  "accepted_chain": [
+    {"from": "expired processor TLS certificate", "to": "payment TLS handshakes fail"},
+    {"from": "payment TLS handshakes fail", "to": "checkout repeatedly retries payment"},
+    {"from": "checkout repeatedly retries payment", "to": "checkout CPU saturation"},
+    {"from": "checkout CPU saturation", "to": "checkout requests return 503"}
+  ],
+  "critical_evidence_ids": ["ev-p05-02", "ev-p05-03", "ev-p05-04", "ev-p05-05"]
+}

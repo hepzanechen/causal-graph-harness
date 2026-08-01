@@ -1,0 +1,81 @@
+{
+  "id": "p03",
+  "title": "Checkout latency with healthy checkout pods",
+  "difficulty": "multi_hop",
+  "prompt": "Checkout p95 increased from 420 ms to 8.7 s at 16:42 UTC. Checkout pods are healthy and no deployment targeted checkout itself. Determine the originating fault and trace how it reaches checkout latency.",
+  "source_types": ["metrics", "logs", "traces", "configuration"],
+  "answer_contract": {
+    "hypotheses": [{
+      "rank": "integer",
+      "root_causes": [{"component": "string", "fault": "string"}],
+      "causal_chain": [{"from": "string", "to": "string"}],
+      "confidence": "number between 0 and 1",
+      "evidence_ids": ["string"]
+    }]
+  },
+  "evidence": [
+    {
+      "id": "ev-p03-01",
+      "source_type": "metrics",
+      "component": "checkout-service",
+      "timestamp": "16:42:00Z",
+      "summary": "Checkout latency rises without local saturation",
+      "content": "checkout p95 rose to 8.7 s while CPU was 34%, memory 41%, queue depth 2, and pod restart count zero.",
+      "tags": ["latency", "checkout", "healthy"]
+    },
+    {
+      "id": "ev-p03-02",
+      "source_type": "traces",
+      "component": "checkout-service",
+      "timestamp": "16:43:11Z",
+      "summary": "Promotion lookup dominates slow checkout traces",
+      "content": "Trace checkout/b19 total 9.1 s: inventory 38 ms, payment 91 ms, promotion ApplyDiscount 8.82 s across 15 repeated client spans.",
+      "tags": ["trace", "promotion", "retry"]
+    },
+    {
+      "id": "ev-p03-03",
+      "source_type": "logs",
+      "component": "promotion-service",
+      "timestamp": "16:42:04Z",
+      "summary": "Promotion performs repeated cache retries",
+      "content": "promotion-service logged cache timeout attempts 1 through 15 for each ApplyDiscount request; retry delay is 500 ms and no overall deadline is set.",
+      "tags": ["cache", "timeout", "retry"]
+    },
+    {
+      "id": "ev-p03-04",
+      "source_type": "configuration",
+      "component": "promotion-service",
+      "timestamp": "16:31:00Z",
+      "summary": "Retry policy changed shortly before the incident",
+      "content": "Config revision 771 changed promotion cache max_attempts from 2 to 15 and request_deadline_ms from 1200 to 0. Cache endpoint was unchanged.",
+      "tags": ["configuration", "retry", "deadline"]
+    },
+    {
+      "id": "ev-p03-05",
+      "source_type": "metrics",
+      "component": "promotion-cache",
+      "timestamp": "16:42:00Z",
+      "summary": "A brief cache latency event triggers retries",
+      "content": "promotion-cache p99 rose to 620 ms for 70 seconds during shard rebalancing, then returned to 12 ms. Checkout latency stayed high until retrying requests drained.",
+      "tags": ["cache", "latency", "rebalance"]
+    },
+    {
+      "id": "ev-p03-06",
+      "source_type": "metrics",
+      "component": "orders-database",
+      "timestamp": "16:42:00Z",
+      "summary": "Orders database shows a small unrelated latency rise",
+      "content": "orders database p95 moved from 17 ms to 31 ms, remaining below its 80 ms SLO; checkout traces spend under 45 ms in order writes.",
+      "tags": ["database", "latency", "distractor"]
+    },
+    {
+      "id": "ev-p03-07",
+      "source_type": "metrics",
+      "component": "promotion-service",
+      "timestamp": "16:44:00Z",
+      "summary": "Promotion connection pool becomes occupied",
+      "content": "promotion outbound pool active connections reached 100/100 and waiters reached 238 as long retry chains accumulated.",
+      "tags": ["pool", "connections", "saturation"]
+    }
+  ]
+}
