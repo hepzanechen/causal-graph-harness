@@ -151,15 +151,26 @@ source tag differs.
 A skill (`causal-graph-research`) that any driving agent follows:
 
 1. Define the research question; create/open the topic folder.
-2. Run relevant adapters (or accept human-asserted evidence); register via
+2. **Elicit human input (optional, skippable).** Ask the human for (a) any
+   known facts/evidence they already have, and (b) any suspected
+   cause/hypothesis. (a) registers via `add_evidence.py`/`add_fact.py` on
+   equal footing with anything an adapter would return. (b) registers as a
+   deduction or causal-edge proposal with an explicit neutral/low prior — a
+   hypothesis to test, not a starting verdict, so a human's hunch gets a
+   head start on being *considered*, not on being *believed*. This step is
+   valuable when the human is a domain expert with material the agent would
+   otherwise have to rediscover, and is fully skippable for simple problems
+   or when the human wants the agent to discover and decide everything
+   autonomously — the agent then proceeds straight to step 3 unprompted.
+3. Run relevant adapters (or accept human-asserted evidence); register via
    `add_evidence.py`.
-3. Extract candidate facts from evidence → `add_fact.py`.
-4. Propose deductions from facts → `add_deduction.py`.
-5. Propose causal edges between grounded nodes → `propose_causal_edge.py`.
-6. For each new piece of evidence bearing on an edge, estimate a likelihood
+4. Extract candidate facts from evidence → `add_fact.py`.
+5. Propose deductions from facts → `add_deduction.py`.
+6. Propose causal edges between grounded nodes → `propose_causal_edge.py`.
+7. For each new piece of evidence bearing on an edge, estimate a likelihood
    ratio and call `update_causal_edge.py` (script does the Bayes math; may
    queue for review instead of applying).
-7. Periodically summarize graph state for human review, including any
+8. Periodically summarize graph state for human review, including any
    pending-review queue count.
 
 Steps are **conditional, not mandatory** — see Scope & simplicity below.
@@ -215,6 +226,9 @@ mandatory pipeline:
 - Pending-review and urgency tiering only activate once a causal graph with
   real structure exists; a pure fact-gathering session never touches that
   machinery.
+- The initial human-elicitation step (process skill step 2) is opt-in: a
+  user can tell the agent to skip straight to autonomous, adapter-driven
+  discovery, letting the agent find and decide everything itself.
 
 **Rule for implementation:** the full pipeline is for topics complex enough
 to need it; a simple question must be answerable with 1-2 script calls and
