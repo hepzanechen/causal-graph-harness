@@ -92,7 +92,7 @@ def commit_mutation(topic: str, agent_id: str, script: str, args: dict,
     for key, record in writes:
         upsert(topic, key, record)
     meta = _load_meta(topic)
-    meta["applied_through"] = len(read_audit(topic))
+    meta["applied_through"] = meta.get("applied_through", 0) + 1
     _save_meta(topic, meta)
     return entry
 
