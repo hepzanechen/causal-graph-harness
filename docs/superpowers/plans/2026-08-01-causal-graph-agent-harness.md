@@ -944,10 +944,6 @@ Expected: FAIL (`scripts/add_evidence.py` does not exist yet, non-zero exit).
 import argparse
 import sys
 import time
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from causal_graph import storage
 from causal_graph.cli import current_agent_id
 from causal_graph.lock import topic_lock
@@ -1102,10 +1098,6 @@ Expected: FAIL (`scripts/add_fact.py` does not exist yet).
 import argparse
 import sys
 import time
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from causal_graph import storage
 from causal_graph.cli import current_agent_id
 from causal_graph.lock import topic_lock
@@ -1262,10 +1254,6 @@ Expected: FAIL (`scripts/add_deduction.py` does not exist yet).
 import argparse
 import sys
 import time
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from causal_graph import storage
 from causal_graph.cli import current_agent_id
 from causal_graph.lock import topic_lock
@@ -1423,10 +1411,6 @@ Expected: FAIL (`scripts/propose_causal_edge.py` does not exist yet).
 import argparse
 import sys
 import time
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from causal_graph import storage
 from causal_graph.cli import current_agent_id
 from causal_graph.lock import topic_lock
@@ -1668,10 +1652,6 @@ Expected: FAIL (`scripts/update_causal_edge.py` does not exist yet).
 import argparse
 import sys
 import time
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from causal_graph import bayes, review, storage
 from causal_graph.cli import current_agent_id
 from causal_graph.lock import topic_lock
@@ -1875,10 +1855,6 @@ Expected: FAIL (`scripts/record_falsification_check.py` does not exist yet).
 import argparse
 import sys
 import time
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from causal_graph import storage
 from causal_graph.cli import current_agent_id
 from causal_graph.lock import topic_lock
@@ -2127,10 +2103,6 @@ Expected: FAIL (scripts don't exist yet).
 import argparse
 import sys
 import time
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from causal_graph import lifecycle, storage
 from causal_graph.cli import current_agent_id
 from causal_graph.lock import topic_lock
@@ -2206,10 +2178,6 @@ if __name__ == "__main__":
 #!/usr/bin/env python3
 import argparse
 import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from causal_graph import lifecycle, storage
 from causal_graph.cli import current_agent_id
 from causal_graph.lock import topic_lock
@@ -2388,10 +2356,6 @@ Expected: FAIL (scripts don't exist yet).
 import argparse
 import json
 import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from causal_graph import graph as graphmod
 from causal_graph import storage
 from causal_graph.lock import topic_lock
@@ -2432,10 +2396,6 @@ if __name__ == "__main__":
 import argparse
 import sys
 import time
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from causal_graph import bayes, storage
 from causal_graph.cli import current_agent_id
 from causal_graph.lock import topic_lock
