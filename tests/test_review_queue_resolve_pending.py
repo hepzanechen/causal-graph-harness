@@ -6,8 +6,8 @@ import pathlib
 
 from causal_graph import storage
 
-SCRIPTS = ("add_evidence.py", "add_fact.py", "propose_causal_edge.py",
-           "update_causal_edge.py", "review_queue.py", "resolve_pending.py")
+SCRIPTS = ("add_evidence.py", "add_fact.py", "add_deduction.py", "propose_causal_edge.py",
+           "update_causal_edge.py", "review_queue.py", "resolve_pending.py", "revise_fact.py")
 
 
 def _copy_scripts(tmp_path):
@@ -89,3 +89,39 @@ def test_resolve_pending_amend_uses_replacement_ratio(tmp_path, monkeypatch):
     assert result.returncode == 0, result.stderr
     edges = {e["id"]: e for e in storage.load_json_list("t", "causal_edges")}
     assert edges[edge]["updates"][0]["likelihood_ratio"] == 3.0
+
+
+def test_resolve_pending_approve_fact_revision_cascades_stale_to_dependents(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _copy_scripts(tmp_path)
+    ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
+    f1 = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "verified"], cwd=tmp_path).stdout.strip()
+    f2 = _run("add_fact.py", ["--topic", "t", "--statement", "B", "--evidence-id", ev, "--confidence", "verified"], cwd=tmp_path).stdout.strip()
+    d1 = _run("add_deduction.py", ["--topic", "t", "--claim", "C", "--supports", f"fact:{f1}"], cwd=tmp_path).stdout.strip()
+    e1 = _run("propose_causal_edge.py", [
+        "--topic", "t", "--from", f"deduction:{d1}", "--to", f"fact:{f2}",
+        "--relation-type", "contributes-to", "--prior", "0.3",
+    ], cwd=tmp_path).stdout.strip()
+
+    monkeypatch.setenv("CAUSAL_GRAPH_AGENT_ID", "agent-1")
+    result = _run("revise_fact.py", [
+        "--topic", "t", "--fact-id", f1, "--new-status", "retracted", "--reason", "was wrong",
+    ], cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert "queued for review" in result.stdout
+
+    pending = storage.load_json_list("t", "pending_review")
+    assert len(pending) == 1
+    item_id = pending[0]["id"]
+
+    result = _run("resolve_pending.py", [
+        "--topic", "t", "--id", item_id, "--action", "approve",
+    ], cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+
+    facts = {f["id"]: f for f in storage.load_json_list("t", "facts")}
+    deds = {d["id"]: d for d in storage.load_json_list("t", "deductions")}
+    edges = {e["id"]: e for e in storage.load_json_list("t", "causal_edges")}
+    assert facts[f1]["status"] == "retracted"
+    assert deds[d1]["status"] == "stale"
+    assert edges[e1]["status"] == "stale"

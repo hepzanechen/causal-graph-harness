@@ -2,7 +2,7 @@
 import argparse
 import sys
 import time
-from causal_graph import bayes, storage
+from causal_graph import bayes, lifecycle, storage
 from causal_graph.cli import current_agent_id
 from causal_graph.lock import topic_lock
 from causal_graph.schema import ValidationError
@@ -43,6 +43,7 @@ def main():
                 fact = next(f for f in facts if f["id"] == item["fact_id"])
                 fact["status"] = item["new_status"]
                 writes.append(("facts", fact))
+                writes += lifecycle.propagate_stale(args.topic, f"fact:{fact['id']}")
 
         storage.commit_mutation(
             args.topic, current_agent_id(), "resolve_pending.py", vars(args), writes,
