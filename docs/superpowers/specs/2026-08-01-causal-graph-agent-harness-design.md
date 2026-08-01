@@ -75,24 +75,32 @@ downstream of facts, so they form one connected grounding graph:
    `supporting_fact_ids[]` / `supporting_deduction_ids[]`). Pure
    traceability: "this claim rests on these facts."
 2. **Causal graph** (probabilistic) — a separate edge type
-   (`causal_edges.json`) over nodes drawn from the grounding graph
-   (`node_type: fact|deduction`), each edge carrying a `prior`/`posterior`
-   that gets Bayesian-updated as evidence arrives.
+   (`causal_edges.json`) over nodes drawn from the grounding graph, each
+   edge carrying a `prior`/`posterior` that gets Bayesian-updated as
+   evidence arrives.
 
-Evidence itself is not a graph — a flat, cited leaf store that facts point
-into.
+**Only facts and deductions are nodes.** Evidence is never a node in either
+graph — it's a flat, cited leaf store that facts point into
+(`evidence_ids[]`). A causal edge can connect any combination of fact/
+deduction nodes (fact→fact, deduction→fact, deduction→deduction, etc.), so
+node identity carries its own type instead of a separate type field: IDs
+are prefixed, e.g. `"fact:f1"`, `"deduction:d1"`.
 
 Per-topic storage: `research/<topic>/graph/`
-- `facts.json` — `{id, statement, evidence_ids[], source_adapter, confidence: verified|reported|inferred, created_at, created_by}`
+- `facts.json` — `{id, statement, evidence_ids[], confidence: verified|reported|inferred, created_at, created_by}`
 - `evidence.json` — `{id, content, source_adapter, source_ref, retrieved_at}`
 - `deductions.json` — `{id, claim, supporting_fact_ids[], supporting_deduction_ids[], logic_note, created_at, created_by}`
-- `causal_edges.json` — `{id, from_node, to_node, node_type: fact|deduction, prior, posterior, updates: [{evidence_id, likelihood_ratio, agent, timestamp}], last_updated}`
+- `causal_edges.json` — `{id, from_node, to_node, prior, posterior, updates: [{evidence_id, likelihood_ratio, agent, timestamp}], last_updated}` — `from_node`/`to_node` are type-prefixed IDs (`"fact:f1"`, `"deduction:d1"`)
 - `audit_log.jsonl` — append-only, one line per mutation call:
   `{timestamp, agent_id, script, args, result}`
 - `pending_review.jsonl` — queued items requiring human review (see below)
 
-`source_adapter` is a free-text name, not a closed enum — adapters are not
-hardcoded into the schema or scripts.
+`source_adapter` (on `evidence.json` only — see below) is a free-text name,
+not a closed enum, so adapters are not hardcoded into the schema or scripts.
+`facts.json` deliberately has no `source_adapter` field: it's derivable via
+`evidence_ids` → `evidence.json`, and a fact can cite evidence from more
+than one adapter, so a single value on the fact itself would be either
+redundant or wrong.
 
 The causal edge's `posterior` is always computed by the script from
 `prior × likelihood_ratio` (normalized). Agents/humans supply a
@@ -105,7 +113,7 @@ model is driving.
 - `add_evidence.py --adapter <name> --content ... --source-ref ...`
 - `add_fact.py --statement ... --evidence-id ... --confidence ...`
 - `add_deduction.py --claim ... --supports fact:ID,deduction:ID2`
-- `propose_causal_edge.py --from ... --to ... --prior ...`
+- `propose_causal_edge.py --from fact:ID|deduction:ID --to fact:ID|deduction:ID --prior ...`
 - `update_causal_edge.py --edge-id ... --evidence-id ... --likelihood-ratio ...`
   (computes exact Bayes posterior; may divert to `pending_review.jsonl`
   instead of applying — see Review & urgency below)
