@@ -377,3 +377,28 @@ present or configured before the simple path works.
 - Consistency-repair test: simulate a crash where `audit_log.jsonl` has an
   entry not yet reflected in the graph snapshot files; verify the next
   script invocation repairs the snapshot before proceeding.
+
+## Future work: cross-agent distribution (deferred)
+
+`AGENTS.md` at the repo root already gives any agent that can read a repo
+and run shell commands a way to discover and drive this harness — that's
+the low-cost baseline and it's done. Two further steps were scoped and
+deliberately deferred (2026-08-01), in priority order the user chose:
+
+1. **Per-agent plugin manifests** (`.claude-plugin/`, `.cursor-plugin/`,
+   `.codex-plugin/`, `gemini-extension.json`, etc.) so agents other than
+   Claude Code auto-discover this harness instead of needing to be pointed
+   at `AGENTS.md`. Modeled on how the `superpowers` plugin
+   (`obra/superpowers-marketplace`) ships one manifest per agent alongside
+   the same shared content — see that repo for the concrete shape of each
+   format. Real ongoing maintenance cost per format added.
+2. **Publish for real remote install** (PyPI for `pip install
+   causal-graph-harness`, and/or a registered marketplace entry) so use
+   doesn't require a local git clone.
+
+**Why deferred:** the priority right now is validating that the
+skill/process itself performs well in practice. Packaging and multi-agent
+distribution are worth doing once the design has proven itself stable
+through real use — building distribution for something still likely to
+change is wasted churn. Revisit this section once the harness has seen
+enough real investigations to be confident the process itself is right.

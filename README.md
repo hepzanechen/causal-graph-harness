@@ -77,11 +77,15 @@ cross a high-confidence threshold without a recorded falsification check).
 
 ## Full workflow for driving agents
 
-`.claude/skills/causal-graph-research/SKILL.md` documents the complete
-agent-facing process: eliciting human input, gathering evidence per source,
-the falsification-gate retry pattern for high-confidence updates, and
-working the review queue. Read that for the full picture rather than this
-README.
+`AGENTS.md` at the repo root is the agent-neutral entrance point: it
+documents install, the storage model, the complete step-by-step process
+(eliciting human input, gathering evidence per source, the
+falsification-gate retry pattern for high-confidence updates, working the
+review queue), and the full CLI reference. Read that for the full picture
+rather than this README — it works the same whether you're Claude Code
+(which also auto-discovers `.claude/skills/causal-graph-research/SKILL.md`,
+a thin pointer at the same content) or any other agent that can read a repo
+and run shell commands.
 
 ## Adapters
 
