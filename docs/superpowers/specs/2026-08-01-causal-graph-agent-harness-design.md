@@ -154,21 +154,28 @@ mutation touches.
 
 ## Evidence adapters
 
-Interface: `fetch(query) -> list[EvidenceRecord]`. Built now:
-- `ExternalWebAdapter` — wraps WebSearch/WebFetch.
+Interface: `fetch(query) -> list[EvidenceRecord]`. Built now as real code:
 - `CodebaseAdapter` — greps/reads the local repo; `source_ref` is a file
-  path + line range.
+  path + line range. Pure stdlib, no external dependency.
 
 Stubbed (interface only, wired to real systems later):
 - `InternalDBAdapter`, `ManualDocAdapter`, `ExperimentResultsAdapter`.
 
-**Humans are not a "fetch" adapter.** Human-provided evidence is asserted
-directly in conversation, not queried, so it flows through the same
-`add_evidence.py` / `add_fact.py` scripts as any adapter output, with
-`source_adapter="human"` and `source_ref` pointing at the
+**`human` and `external_web` are agent-mediated, not code adapters.**
+Web search requires either a third-party search library/API key or a
+driving agent's own native tool — since the harness must stay portable
+across driving agents/models, and not every agent will have the same
+search tool or a configured key, web evidence is registered the same way
+human evidence is: the driving agent uses whatever web-search capability it
+already has, then registers each result directly via
+`add_evidence.py --adapter external_web --content ... --source-ref <url>`.
+Same for `--adapter human` with `--source-ref` pointing at the
 conversation/session. Same schema, same confidence tiers, same audit trail
-— humans and agents are on equal footing as evidence sources; only the
-source tag differs.
+as any code adapter — humans, web results, and code-fetched evidence are on
+equal footing; only the source tag and how it got there differ. This means
+`adapters/` only needs to ship one real module (`CodebaseAdapter`) plus the
+stub interfaces; `external_web` and `human` are documented adapter-name
+conventions, not Python modules.
 
 ## Process skill
 
