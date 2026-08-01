@@ -6,6 +6,14 @@ __pycache__/
 *.egg/
 build/
 dist/
+.vscode/
+.idea/
+
+# Per-user local agent state — never meant to be shared (contains local
+# paths, personal permission rules, etc). Some agent CLIs already exclude
+# this via global gitignore config, but pin it here too so a fresh clone on
+# any machine is safe by default.
+.claude/settings.local.json
 
 # Runtime state written by the causal-graph harness (facts.json, evidence.json,
 # deductions.json, causal_edges.json, audit_log.jsonl, pending_review.jsonl,
