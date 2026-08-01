@@ -36,8 +36,10 @@ agent/model drove the investigation.
 
 ## Non-goals (out of scope for this design)
 
-- Automated contrarian/debate agent role (deferred — see "Future: gate"
-  below; only the *hook* for it is built now).
+- A fully automated contrarian/debate agent role (deferred — see "Future:
+  automated gate" below). A lightweight, script-enforced falsification
+  *checkpoint* is in scope for v1 (see "Falsification checkpoint" below) —
+  it's a required checklist, not a debate agent.
 - Any UI or visualization of the graph.
 - Distributed/concurrent multi-writer support beyond a simple per-topic file
   lock.
@@ -87,13 +89,26 @@ node identity carries its own type instead of a separate type field: IDs
 are prefixed, e.g. `"fact:f1"`, `"deduction:d1"`.
 
 Per-topic storage: `research/<topic>/graph/`
-- `facts.json` — `{id, statement, evidence_ids[], confidence: verified|reported|inferred, created_at, created_by}`
+- `facts.json` — `{id, statement, evidence_ids[], confidence: verified|reported|inferred, status: active|contested|superseded|retracted, supersedes_id, created_at, created_by}`
 - `evidence.json` — `{id, content, source_adapter, source_ref, retrieved_at}`
-- `deductions.json` — `{id, claim, supporting_fact_ids[], supporting_deduction_ids[], logic_note, created_at, created_by}`
-- `causal_edges.json` — `{id, from_node, to_node, prior, posterior, updates: [{evidence_id, likelihood_ratio, agent, timestamp}], last_updated}` — `from_node`/`to_node` are type-prefixed IDs (`"fact:f1"`, `"deduction:d1"`)
+- `deductions.json` — `{id, claim, supporting_fact_ids[], supporting_deduction_ids[], logic_note, status: active|contested|superseded|retracted|stale, supersedes_id, created_at, created_by}`
+- `causal_edges.json` — `{id, from_node, to_node, relation_type, prior, posterior, status: active|contested|superseded|retracted|stale, supersedes_id, updates: [{evidence_id, likelihood_ratio, correlated_with: [evidence_id...], agent, timestamp}], falsification_checks: [{alternative_hypothesis, counterevidence_search_result, checked_by, checked_at}], last_updated}` — `from_node`/`to_node` are type-prefixed IDs (`"fact:f1"`, `"deduction:d1"`); `relation_type` is a free-text label of the causal claim (e.g. "contributes-to", "necessary-for")
 - `audit_log.jsonl` — append-only, one line per mutation call:
   `{timestamp, agent_id, script, args, result}`
 - `pending_review.jsonl` — queued items requiring human review (see below)
+
+`status` defaults to `active` on every entity. `stale` is reserved for
+deductions/edges automatically demoted by retraction propagation (see
+"Lifecycle & correction propagation"); `contested`/`superseded`/`retracted`
+are only ever set explicitly via `revise_fact.py`/`dispute_edge.py`.
+`supersedes_id` links a new entry to the (now-superseded) one it replaces,
+so the audit trail stays intact rather than being overwritten.
+
+Each `updates[]` entry's `correlated_with` lists which prior evidence
+applied to *this edge* the new evidence is **not** independent from (empty
+= treated as independent of everything applied so far — the common case).
+This makes independence an explicit claim instead of a silent assumption;
+see "Evidence independence" below for how the update script uses it.
 
 `source_adapter` (on `evidence.json` only — see below) is a free-text name,
 not a closed enum, so adapters are not hardcoded into the schema or scripts.
@@ -113,20 +128,29 @@ model is driving.
 - `add_evidence.py --adapter <name> --content ... --source-ref ...`
 - `add_fact.py --statement ... --evidence-id ... --confidence ...`
 - `add_deduction.py --claim ... --supports fact:ID,deduction:ID2`
-- `propose_causal_edge.py --from fact:ID|deduction:ID --to fact:ID|deduction:ID --prior ...`
-- `update_causal_edge.py --edge-id ... --evidence-id ... --likelihood-ratio ...`
-  (computes exact Bayes posterior; may divert to `pending_review.jsonl`
-  instead of applying — see Review & urgency below)
+- `propose_causal_edge.py --from fact:ID|deduction:ID --to fact:ID|deduction:ID --relation-type ... --prior ...`
+- `update_causal_edge.py --edge-id ... --evidence-id ... --likelihood-ratio ... [--correlated-with evidence_id,...]`
+  (computes exact Bayes posterior; evidence marked `correlated_with` prior
+  evidence on the same edge is combined jointly rather than multiplied
+  in, to avoid double-counting non-independent evidence; may divert to
+  `pending_review.jsonl` instead of applying — see Review & urgency below)
+- `record_falsification_check.py --edge-id ... --alternative-hypothesis ... --counterevidence-search ... --result ...`
+  (logs an attempted disconfirming-evidence search, including null
+  results; required before an edge can cross the high-confidence
+  threshold — see Falsification checkpoint below)
 - `revise_fact.py` / `dispute_edge.py` — mark an existing entry
   superseded/contested with a reason; never silently overwrite, preserving
-  audit history
+  audit history; cascades a `stale` status to dependents (see Lifecycle &
+  correction propagation below)
 - `review_queue.py` — list pending items
 - `resolve_pending.py --id X --approve|--reject|--amend`
 
 Each script: validates schema + referential integrity + probability bounds
-`[0,1]`, writes atomically (temp file + rename), appends to
-`audit_log.jsonl`, and exits non-zero with a clear message on invalid input
-(no partial writes).
+`[0,1]`, and exits non-zero with a clear message on invalid input before
+writing anything. See Error handling below for how writes across
+`audit_log.jsonl` and the graph JSON files stay consistent — a single
+temp-file-rename is atomic for one file, not across the several files a
+mutation touches.
 
 ## Evidence adapters
 
@@ -214,6 +238,73 @@ pass can resolve `normal`-tier items the same way a human does via
 `resolve_pending.py`, without changing the schema or the scripts that
 produce the queue.
 
+## Falsification checkpoint
+
+The problem this harness exists to solve is bias in *evidence selection* —
+an agent that only ever looks for confirming evidence will produce a tidy,
+well-formed graph with a confident-looking posterior regardless of how
+thorough the investigation actually was. Graph structure and human review
+alone don't catch this: they can't reveal evidence that was never sought in
+the first place. So this is enforced structurally, not left to agent
+discipline:
+
+`update_causal_edge.py` refuses to let an edge's posterior cross the
+high-confidence threshold unless `causal_edges.json` shows at least one
+entry in `falsification_checks[]` for that edge — recorded via
+`record_falsification_check.py`, which requires (1) a stated alternative or
+explicit "unknown" hypothesis, (2) an observation that would discriminate
+against the current leading hypothesis, and (3) a recorded result of an
+actual counterevidence search, including a null result. If the check is
+missing, the update diverts to `pending_review.jsonl` exactly like the
+other review triggers — this is simply a fifth trigger, not a separate
+mechanism.
+
+The lightweight fact-only path (no causal edges) is exempt, per Scope &
+simplicity below.
+
+## Evidence independence
+
+Sequentially multiplying agent-estimated likelihood ratios is only valid
+when each ratio is conditional on all evidence already applied to that
+edge, or when the evidence items are independent. Two reports derived from
+the same underlying source, or two symptoms produced by the same
+measurement, are not independent — multiplying their likelihood ratios
+double-counts them and overstates confidence, even though the arithmetic
+itself is computed exactly.
+
+`update_causal_edge.py` requires each new evidence item to declare
+`correlated_with` — the IDs of prior evidence on *that edge* it is not
+independent from (empty = independent of everything applied so far).
+Evidence marked correlated with an existing entry is not multiplied in
+separately; the script combines the correlated group (using the strongest
+single likelihood ratio in the group, not the product) before updating the
+posterior. This keeps the guarantee scoped correctly: the arithmetic is
+exact given the independence structure asserted, not a claim that the
+harness has verified true statistical independence.
+
+## Lifecycle & correction propagation
+
+An audit trail alone isn't enough — the harness also needs an unambiguous
+answer to "what is currently believed, and why?" Without propagation, a
+retracted root fact would leave every deduction and causal posterior built
+on it looking current, which is especially damaging in a dependency graph
+where one correction can invalidate a large derived subgraph.
+
+Every fact, deduction, and causal edge carries a `status`
+(`active|contested|superseded|retracted`, plus `stale` for automatic
+demotions) and a `supersedes_id`. When `revise_fact.py` or `dispute_edge.py`
+changes a node's status away from `active`, the script walks the same
+downstream-reachability traversal used for urgency-score impact counts (see
+Urgency tiering above) and marks every dependent deduction and causal edge
+`stale` — excluded from the current view until it's recomputed or
+explicitly reaffirmed by re-running the normal `add_deduction.py` /
+`update_causal_edge.py` call against it. The status change and its
+invalidation set are applied as one operation, so there's no window where a
+retraction is recorded but its dependents still read as active.
+
+A test retracts a root fact and asserts that no dependent claim remains
+`active` (see Testing below).
+
 ## Scope & simplicity (standing design rule)
 
 Every layer beyond basic fact-recording is **optional per use**, not a
@@ -239,8 +330,20 @@ present or configured before the simple path works.
 
 - Schema validation, referential integrity, and probability-bounds checks
   before any write.
-- Atomic writes (temp file + rename) — no partial/corrupt state on crash.
 - Invalid input → non-zero exit, clear stderr message, nothing written.
+- **Multi-file consistency**: `audit_log.jsonl` is the single authoritative,
+  append-first record of every mutation — one atomic append, nothing else
+  written until it succeeds. The graph JSON files (`facts.json`,
+  `deductions.json`, `causal_edges.json`, `pending_review.jsonl`) are
+  **derived snapshots** regenerated from the log, written after the audit
+  append succeeds. Every script run starts with a cheap consistency check —
+  if the log has entries newer than the snapshot files reflect (e.g. after a
+  crash between the audit append and the snapshot write), it replays the
+  unapplied entries to repair the snapshots before proceeding. This keeps
+  the inspectable/git-friendly plain-JSON-file property without needing a
+  database, while making "was this mutation audited" always answerable
+  from the log alone — a graph-file write can be redone or lost to a crash,
+  an audited mutation cannot become invisible.
 - Concurrency: a simple per-topic file lock (flock); documented as
   "single active writer per topic," not distributed locking. Revisit only if
   this proves insufficient in practice.
@@ -256,3 +359,14 @@ present or configured before the simple path works.
 - Adapter contract tests for `ExternalWebAdapter` and `CodebaseAdapter`
   (mocked underlying calls; just checking well-formed `EvidenceRecord`
   output).
+- Falsification-gate test: an edge update that would cross the
+  high-confidence threshold without a recorded `falsification_checks[]`
+  entry is diverted to `pending_review.jsonl`, not applied.
+- Evidence-independence test: two evidence items marked `correlated_with`
+  each other are combined (strongest single likelihood ratio), not
+  multiplied together, in the resulting posterior.
+- Retraction-propagation test: retracting a root fact cascades `stale` to
+  every dependent deduction and causal edge; none remain `active`.
+- Consistency-repair test: simulate a crash where `audit_log.jsonl` has an
+  entry not yet reflected in the graph snapshot files; verify the next
+  script invocation repairs the snapshot before proceeding.
