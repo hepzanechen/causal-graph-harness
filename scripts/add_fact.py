@@ -24,7 +24,7 @@ def main():
         if missing:
             raise ValidationError(f"unknown evidence id(s): {missing}")
 
-        record = {
+        candidate = {
             "id": new_id("fact"),
             "statement": args.statement,
             "evidence_ids": args.evidence_ids,
@@ -34,26 +34,31 @@ def main():
             "created_at": time.time(),
             "created_by": current_agent_id(),
         }
-        writes = [("facts", record)]
 
         if args.contradicts:
             known_facts = {f["id"] for f in storage.load_json_list(args.topic, "facts")}
             if args.contradicts not in known_facts:
                 raise ValidationError(f"unknown contradicts target: {args.contradicts}")
-            writes.append(("pending_review", {
+            item = {
                 "id": new_id("rev"),
                 "kind": "contradiction",
-                "fact_id": record["id"],
+                "candidate_fact": candidate,
                 "contradicts_fact_id": args.contradicts,
                 "reason": f"flagged as contradicting {args.contradicts}",
                 "tier": "normal",
                 "created_at": time.time(),
-            }))
+            }
+            storage.commit_mutation(
+                args.topic, current_agent_id(), "add_fact.py", vars(args),
+                [("pending_review", item)],
+            )
+            print(f"queued for review: {item['id']} (candidate fact {candidate['id']} contradicts {args.contradicts})")
+            return
 
         storage.commit_mutation(
-            args.topic, current_agent_id(), "add_fact.py", vars(args), writes,
+            args.topic, current_agent_id(), "add_fact.py", vars(args), [("facts", candidate)],
         )
-    print(record["id"])
+    print(candidate["id"])
 
 
 if __name__ == "__main__":

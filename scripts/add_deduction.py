@@ -17,6 +17,8 @@ def main():
     args = p.parse_args()
 
     refs = [r.strip() for r in args.supports.split(",") if r.strip()]
+    if not refs:
+        raise ValidationError("--supports must reference at least one fact or deduction")
     fact_ids, deduction_ids = [], []
     for r in refs:
         kind, rid = parse_node_ref(r)
@@ -24,12 +26,16 @@ def main():
 
     with topic_lock(args.topic):
         storage.prepare(args.topic)
-        known_facts = {f["id"] for f in storage.load_json_list(args.topic, "facts")}
-        known_deductions = {d["id"] for d in storage.load_json_list(args.topic, "deductions")}
+        known_facts = {f["id"]: f for f in storage.load_json_list(args.topic, "facts")}
+        known_deductions = {d["id"]: d for d in storage.load_json_list(args.topic, "deductions")}
         missing = [f"fact:{i}" for i in fact_ids if i not in known_facts] + \
                   [f"deduction:{i}" for i in deduction_ids if i not in known_deductions]
         if missing:
             raise ValidationError(f"unknown supporting node(s): {missing}")
+        inactive = [f"fact:{i}" for i in fact_ids if known_facts[i]["status"] != "active"] + \
+                   [f"deduction:{i}" for i in deduction_ids if known_deductions[i]["status"] != "active"]
+        if inactive:
+            raise ValidationError(f"supporting node(s) not active: {inactive}")
 
         record = {
             "id": new_id("ded"),

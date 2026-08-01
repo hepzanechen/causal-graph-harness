@@ -33,7 +33,9 @@ def downstream_dependents(topic: str, node_ref: str) -> set:
             eref = f"edge:{e['id']}"
             if eref in dependents:
                 continue
-            if e["from_node"] in known:
+            # A causal edge structurally depends on both endpoints: if either
+            # is invalidated, the edge's claim is no longer current.
+            if e["from_node"] in known or e["to_node"] in known:
                 dependents.add(eref)
                 frontier.add(eref)
                 changed = True
@@ -45,8 +47,14 @@ def urgency_tier(topic: str, node_ref: str) -> str:
     total_nodes = len(facts) + len(deductions)
     if total_nodes < 8:
         return "normal"
+    my_count = len(downstream_dependents(topic, node_ref))
+    if my_count == 0:
+        # No downstream dependents at all can never be high-impact, regardless
+        # of how the rest of the graph is distributed (e.g. a fully flat
+        # graph where every node is tied at zero would otherwise rank at the
+        # 100th percentile and be marked urgent).
+        return "normal"
     all_refs = [f"fact:{i}" for i in facts] + [f"deduction:{i}" for i in deductions]
     counts = sorted(len(downstream_dependents(topic, r)) for r in all_refs)
-    my_count = len(downstream_dependents(topic, node_ref))
     rank = sum(1 for c in counts if c <= my_count) / len(counts)
     return "urgent" if rank >= 0.9 else "normal"

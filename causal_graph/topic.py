@@ -1,4 +1,7 @@
+import re
 from pathlib import Path
+
+from .schema import ValidationError
 
 FILES = {
     "facts": "facts.json",
@@ -10,8 +13,14 @@ FILES = {
     "meta": "_meta.json",
 }
 
+_TOPIC_RE = re.compile(r"^[A-Za-z0-9_-]+$")
+
 
 def graph_dir(topic: str) -> Path:
+    if not _TOPIC_RE.match(topic):
+        raise ValidationError(
+            f"invalid topic slug: {topic!r} (expected letters, digits, '_' or '-' only)"
+        )
     return Path("research") / topic / "graph"
 
 

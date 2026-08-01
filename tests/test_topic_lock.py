@@ -1,6 +1,9 @@
 import time
 from pathlib import Path
 
+import pytest
+
+from causal_graph.schema import ValidationError
 from causal_graph.topic import graph_dir, ensure_graph_dir, path_for
 from causal_graph.lock import topic_lock
 
@@ -26,3 +29,13 @@ def test_topic_lock_is_exclusive(tmp_path, monkeypatch):
     with topic_lock("t"):
         order.append("second-acquired")
     assert order == ["first-acquired", "second-acquired"]
+
+
+def test_graph_dir_rejects_path_traversal(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(ValidationError):
+        graph_dir("../escape")
+    with pytest.raises(ValidationError):
+        graph_dir("/absolute")
+    with pytest.raises(ValidationError):
+        graph_dir("nested/topic")

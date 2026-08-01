@@ -44,6 +44,13 @@ def test_validate_likelihood_ratio_rejects_non_positive():
         validate_likelihood_ratio(-2.0)
 
 
+def test_validate_likelihood_ratio_rejects_non_finite():
+    with pytest.raises(ValidationError):
+        validate_likelihood_ratio(float("nan"))
+    with pytest.raises(ValidationError):
+        validate_likelihood_ratio(float("inf"))
+
+
 def test_confidence_and_status_values():
     assert Confidence.VERIFIED.value == "verified"
     assert Status.STALE.value == "stale"

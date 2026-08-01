@@ -7,7 +7,8 @@ import pathlib
 from causal_graph import storage
 
 
-SCRIPTS = ("add_evidence.py", "add_fact.py", "propose_causal_edge.py", "update_causal_edge.py")
+SCRIPTS = ("add_evidence.py", "add_fact.py", "propose_causal_edge.py", "update_causal_edge.py",
+           "revise_fact.py", "dispute_edge.py")
 
 
 def _copy_scripts(tmp_path):
@@ -81,11 +82,13 @@ def test_update_causal_edge_diverts_on_reversal(tmp_path, monkeypatch):
     posterior_after_first = edges[0]["posterior"]
     assert posterior_after_first < 0.9
 
-    # Second update: a sharply opposing likelihood ratio that drags the trial
-    # posterior back down far enough (>= 2x odds shift against the uptrend) to
-    # trigger is_reversal, without also crossing the high-confidence threshold.
+    # Second update: a distinct piece of evidence with a sharply opposing
+    # likelihood ratio that drags the trial posterior back down far enough
+    # (>= 2x odds shift against the uptrend) to trigger is_reversal, without
+    # also crossing the high-confidence threshold.
+    ev2 = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c2", "--source-ref", "r2"], cwd=tmp_path).stdout.strip()
     second = _run("update_causal_edge.py", [
-        "--topic", "t", "--edge-id", edge, "--evidence-id", ev, "--likelihood-ratio", "0.01",
+        "--topic", "t", "--edge-id", edge, "--evidence-id", ev2, "--likelihood-ratio", "0.01",
     ], cwd=tmp_path)
     assert second.returncode == 0, second.stderr
     assert "queued for review" in second.stdout
@@ -120,3 +123,69 @@ def test_update_causal_edge_applies_when_falsification_check_already_recorded(tm
     assert len(edges[0]["updates"]) == 1
     assert edges[0]["posterior"] > edges[0]["prior"]
     assert storage.load_json_list("t", "pending_review") == []
+
+
+def test_update_causal_edge_rejects_duplicate_evidence(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _copy_scripts(tmp_path)
+    edge, ev = _seed_edge(tmp_path)
+    first = _run("update_causal_edge.py", [
+        "--topic", "t", "--edge-id", edge, "--evidence-id", ev, "--likelihood-ratio", "2.0",
+    ], cwd=tmp_path)
+    assert first.returncode == 0, first.stderr
+
+    result = _run("update_causal_edge.py", [
+        "--topic", "t", "--edge-id", edge, "--evidence-id", ev, "--likelihood-ratio", "3.0",
+    ], cwd=tmp_path)
+    assert result.returncode != 0
+    assert "already been applied" in result.stderr
+
+
+def test_update_causal_edge_rejects_unknown_correlated_with(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _copy_scripts(tmp_path)
+    edge, ev = _seed_edge(tmp_path)
+    result = _run("update_causal_edge.py", [
+        "--topic", "t", "--edge-id", edge, "--evidence-id", ev, "--likelihood-ratio", "2.0",
+        "--correlated-with", "ev_never_applied",
+    ], cwd=tmp_path)
+    assert result.returncode != 0
+    assert "not yet applied to this edge" in result.stderr
+
+
+def test_update_causal_edge_rejects_retracted_edge(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _copy_scripts(tmp_path)
+    edge, ev = _seed_edge(tmp_path)
+    _run("dispute_edge.py", ["--topic", "t", "--edge-id", edge, "--new-status", "retracted", "--reason", "wrong"], cwd=tmp_path)
+
+    result = _run("update_causal_edge.py", [
+        "--topic", "t", "--edge-id", edge, "--evidence-id", ev, "--likelihood-ratio", "2.0",
+    ], cwd=tmp_path)
+    assert result.returncode != 0
+    assert "retracted" in result.stderr
+
+
+def test_update_causal_edge_reaffirms_stale_edge_on_successful_apply(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _copy_scripts(tmp_path)
+    edge, ev = _seed_edge(tmp_path)
+    ev2 = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c2", "--source-ref", "r2"], cwd=tmp_path).stdout.strip()
+
+    # Make the edge stale by retracting its from_node fact (verified facts
+    # need a human agent id to apply the retraction directly).
+    edges = storage.load_json_list("t", "causal_edges")
+    from_fact_id = edges[0]["from_node"].split(":", 1)[1]
+    monkeypatch.setenv("CAUSAL_GRAPH_AGENT_ID", "human")
+    _run("revise_fact.py", ["--topic", "t", "--fact-id", from_fact_id, "--new-status", "retracted", "--reason", "wrong"], cwd=tmp_path)
+    edges = storage.load_json_list("t", "causal_edges")
+    assert edges[0]["status"] == "stale"
+
+    # Re-running the normal update path is the documented reaffirmation
+    # mechanism: it should apply and bring the edge back to active.
+    result = _run("update_causal_edge.py", [
+        "--topic", "t", "--edge-id", edge, "--evidence-id", ev2, "--likelihood-ratio", "2.0",
+    ], cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    edges = storage.load_json_list("t", "causal_edges")
+    assert edges[0]["status"] == "active"

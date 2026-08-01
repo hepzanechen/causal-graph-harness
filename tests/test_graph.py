@@ -19,9 +19,19 @@ def test_downstream_dependents_chain(tmp_path, monkeypatch):
     assert deps == {"deduction:d1", "edge:e1"}
 
 
-def test_downstream_dependents_leaf_has_none(tmp_path, monkeypatch):
+def test_downstream_dependents_includes_edges_via_to_node(tmp_path, monkeypatch):
+    # e1's to_node is fact:f2, so retracting f2 must also invalidate e1 --
+    # a causal edge structurally depends on both endpoints, not just from_node.
     monkeypatch.chdir(tmp_path)
     _seed_small_chain("t")
+    assert downstream_dependents("t", "fact:f2") == {"edge:e1"}
+
+
+def test_downstream_dependents_leaf_with_no_edges_has_none(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    storage.save_json_list("t", "facts", [{"id": "f1"}, {"id": "f2"}])
+    storage.save_json_list("t", "deductions", [])
+    storage.save_json_list("t", "causal_edges", [])
     assert downstream_dependents("t", "fact:f2") == set()
 
 
@@ -41,3 +51,17 @@ def test_urgency_tier_above_floor_flags_high_impact_node(tmp_path, monkeypatch):
     storage.save_json_list("t", "causal_edges", [])
     assert urgency_tier("t", "fact:f0") == "urgent"
     assert urgency_tier("t", "deduction:d1") == "normal"
+
+
+def test_urgency_tier_all_tied_at_zero_is_never_urgent(tmp_path, monkeypatch):
+    # A flat graph with no dependency structure at all: every node has an
+    # identical (zero) impact count. Naive percentile ranking would put every
+    # node at the 100th percentile and mark it urgent; none of them are
+    # actually high-impact, so the floor must catch this degenerate case.
+    monkeypatch.chdir(tmp_path)
+    facts = [{"id": f"f{i}"} for i in range(10)]
+    storage.save_json_list("t", "facts", facts)
+    storage.save_json_list("t", "deductions", [])
+    storage.save_json_list("t", "causal_edges", [])
+    for f in facts:
+        assert urgency_tier("t", f"fact:{f['id']}") == "normal"

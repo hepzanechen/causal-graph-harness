@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import re
 import uuid
 from enum import Enum
@@ -50,6 +51,8 @@ def validate_probability(value, name: str = "value") -> float:
 def validate_likelihood_ratio(value) -> float:
     if not isinstance(value, (int, float)) or isinstance(value, bool):
         raise ValidationError(f"likelihood_ratio must be a number, got {type(value).__name__}")
+    if not math.isfinite(value):
+        raise ValidationError(f"likelihood_ratio must be finite, got {value}")
     if value <= 0:
         raise ValidationError(f"likelihood_ratio must be > 0, got {value}")
     return float(value)

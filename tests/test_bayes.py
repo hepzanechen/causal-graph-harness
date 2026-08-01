@@ -62,3 +62,24 @@ def test_compute_posterior_correlated_evidence_does_not_double_count():
     # Correlated group uses the strongest single LR (8.0), not the product (40.0),
     # so it must equal applying 8.0 alone, not exceed it.
     assert math.isclose(correlated_pair, independent_only, rel_tol=1e-9)
+
+
+def test_compute_posterior_correlated_group_picks_strongest_by_log_distance():
+    # 0.01 is farther from neutral (LR=1) than 0.5 on the log scale, so it is
+    # the "strongest" evidence in the group even though 0.5 > 0.01 numerically.
+    prior = 0.5
+    weaker_alone = compute_posterior(
+        prior, [{"evidence_id": "e1", "likelihood_ratio": 0.5, "correlated_with": []}]
+    )
+    stronger_alone = compute_posterior(
+        prior, [{"evidence_id": "e1", "likelihood_ratio": 0.01, "correlated_with": []}]
+    )
+    correlated_pair = compute_posterior(
+        prior,
+        [
+            {"evidence_id": "e1", "likelihood_ratio": 0.5, "correlated_with": []},
+            {"evidence_id": "e2", "likelihood_ratio": 0.01, "correlated_with": ["e1"]},
+        ],
+    )
+    assert math.isclose(correlated_pair, stronger_alone, rel_tol=1e-9)
+    assert not math.isclose(correlated_pair, weaker_alone, rel_tol=1e-9)

@@ -34,9 +34,24 @@ def main():
         edge = next((e for e in edges if e["id"] == args.edge_id), None)
         if edge is None:
             raise ValidationError(f"unknown edge id: {args.edge_id}")
+        if edge["status"] in ("retracted", "superseded"):
+            raise ValidationError(
+                f"edge {edge['id']} is {edge['status']}; cannot apply new updates to it"
+            )
         known_evidence = {e["id"] for e in storage.load_json_list(args.topic, "evidence")}
         if args.evidence_id not in known_evidence:
             raise ValidationError(f"unknown evidence id: {args.evidence_id}")
+
+        applied_evidence_ids = {u["evidence_id"] for u in edge["updates"]}
+        if args.evidence_id in applied_evidence_ids:
+            raise ValidationError(
+                f"evidence {args.evidence_id} has already been applied to edge {edge['id']}"
+            )
+        unknown_correlated = [c for c in correlated_with if c not in applied_evidence_ids]
+        if unknown_correlated:
+            raise ValidationError(
+                f"--correlated-with references evidence not yet applied to this edge: {unknown_correlated}"
+            )
 
         new_update = {
             "evidence_id": args.evidence_id,
@@ -69,6 +84,11 @@ def main():
 
         edge["updates"] = trial_updates
         edge["posterior"] = new_posterior
+        if edge["status"] == "stale":
+            # Explicit reaffirmation: successfully re-running the normal
+            # update path against a stale edge brings it back into the
+            # current view, per the lifecycle-propagation contract.
+            edge["status"] = "active"
         edge["last_updated"] = time.time()
         storage.commit_mutation(
             args.topic, current_agent_id(), "update_causal_edge.py", vars(args),

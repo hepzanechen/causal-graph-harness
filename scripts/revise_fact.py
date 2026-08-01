@@ -18,6 +18,9 @@ def main():
     p.add_argument("--replacement-statement", default=None, dest="replacement_statement")
     args = p.parse_args()
 
+    if args.replacement_statement and args.new_status != "superseded":
+        raise ValidationError("--replacement-statement requires --new-status superseded")
+
     with topic_lock(args.topic):
         storage.prepare(args.topic)
         facts = storage.load_json_list(args.topic, "facts")
@@ -32,6 +35,7 @@ def main():
                 "kind": "fact_revision",
                 "fact_id": fact["id"],
                 "new_status": args.new_status,
+                "replacement_statement": args.replacement_statement,
                 "reason": args.reason,
                 "tier": "normal",
                 "created_at": time.time(),

@@ -68,6 +68,14 @@ def test_add_fact_with_contradicts_queues_review(tmp_path, monkeypatch):
     assert len(pending) == 1
     assert pending[0]["kind"] == "contradiction"
     assert pending[0]["contradicts_fact_id"] == first
+    assert pending[0]["candidate_fact"]["statement"] == "not A"
+
+    # The contradicting fact is diverted, not applied -- the graph must not
+    # simultaneously present both contradictory facts as active.
+    facts = storage.load_json_list("t", "facts")
+    assert len(facts) == 1
+    assert facts[0]["id"] == first
+    assert facts[0]["status"] == "active"
 
 
 def test_add_fact_with_unknown_contradicts_fails(tmp_path, monkeypatch):

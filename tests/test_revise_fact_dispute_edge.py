@@ -65,6 +65,20 @@ def test_agent_revising_verified_fact_is_queued_not_applied(tmp_path, monkeypatc
     assert pending[0]["kind"] == "fact_revision"
 
 
+def test_revise_fact_replacement_statement_requires_superseded_status(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    _copy_scripts(tmp_path)
+    ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
+    f1 = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "reported"], cwd=tmp_path).stdout.strip()
+
+    result = _run("revise_fact.py", [
+        "--topic", "t", "--fact-id", f1, "--new-status", "retracted", "--reason", "wrong",
+        "--replacement-statement", "A, corrected",
+    ], cwd=tmp_path)
+    assert result.returncode != 0
+    assert "requires --new-status superseded" in result.stderr
+
+
 def test_dispute_edge_updates_status(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     _copy_scripts(tmp_path)
