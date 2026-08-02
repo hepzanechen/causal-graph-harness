@@ -1,0 +1,4711 @@
+[
+  {
+    "id": "c01",
+    "title": "Image API memory collapse",
+    "difficulty": "adversarial_causal",
+    "prompt": "Image requests return 503s after a traffic rise. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c01-01",
+        "source_type": "metrics",
+        "component": "image-api",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The image-api container exceeds its memory limit and is OOM-killed.",
+        "tags": [
+          "image-api",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c01-02",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Image requests return 503.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c01-03",
+        "source_type": "experiment",
+        "component": "image-api",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Restoring the cache limit stops memory growth and 503s without changing the proxy.",
+        "tags": [
+          "image-api",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c01-04",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "The thumbnail database has a harmless 9 ms latency increase.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c01-05",
+        "source_type": "metrics",
+        "component": "edge-proxy",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for edge-proxy changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "edge-proxy",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c01-06",
+        "source_type": "traces",
+        "component": "image-api",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Repeated restarts leave no ready image-api capacity.",
+        "tags": [
+          "image-api",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c01-07",
+        "source_type": "logs",
+        "component": "image-api",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Cache entries grow with every unique image and are never evicted.",
+        "tags": [
+          "image-api",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c01-08",
+        "source_type": "configuration",
+        "component": "image-api",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A release removed the decoded-image cache size limit.",
+        "tags": [
+          "image-api",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c01-09",
+        "source_type": "experiment",
+        "component": "edge-proxy",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Proxy bypass tests still fail, and its upstream-reset count begins only after image-api restarts.",
+        "tags": [
+          "edge-proxy",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c01-10",
+        "source_type": "change-log",
+        "component": "edge-proxy",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "The edge proxy deployed four minutes before the first 503 and reports a small CPU rise.",
+        "tags": [
+          "edge-proxy",
+          "change"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c02",
+    "title": "Catalog authentication outage",
+    "difficulty": "adversarial_causal",
+    "prompt": "Catalog reads fail with authentication errors. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c02-01",
+        "source_type": "change-log",
+        "component": "database failover",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "A standby database promotion alert fired shortly before the incident.",
+        "tags": [
+          "database failover",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c02-02",
+        "source_type": "experiment",
+        "component": "database failover",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Both primary and standby reject the same catalog identity while other identities connect normally.",
+        "tags": [
+          "database failover",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c02-03",
+        "source_type": "experiment",
+        "component": "catalog-service",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Rotating only the catalog credential restores reads.",
+        "tags": [
+          "catalog-service",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c02-04",
+        "source_type": "logs",
+        "component": "catalog-service",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "New catalog database connections are rejected as password expired.",
+        "tags": [
+          "catalog-service",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c02-05",
+        "source_type": "metrics",
+        "component": "catalog-service",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The connection pool drains as existing sessions close.",
+        "tags": [
+          "catalog-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c02-06",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Catalog reads return authentication failures.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c02-07",
+        "source_type": "metrics",
+        "component": "database failover",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for database failover changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "database failover",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c02-08",
+        "source_type": "configuration",
+        "component": "catalog-service",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "The catalog database credential reached its configured expiry time without rotation.",
+        "tags": [
+          "catalog-service",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c02-09",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Search indexing lag rises but remains inside its SLO.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c02-10",
+        "source_type": "traces",
+        "component": "catalog-service",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Catalog queries cannot acquire a usable database connection.",
+        "tags": [
+          "catalog-service",
+          "trace"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c03",
+    "title": "Checkout retry amplification",
+    "difficulty": "adversarial_causal",
+    "prompt": "Checkout latency rises while checkout pods remain healthy. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c03-01",
+        "source_type": "logs",
+        "component": "promotion-service",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "A brief promotion-cache timeout causes fifteen serial retries per request.",
+        "tags": [
+          "promotion-service",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c03-02",
+        "source_type": "change-log",
+        "component": "promotion-cache",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "A promotion-cache shard rebalance coincides with the first slow request.",
+        "tags": [
+          "promotion-cache",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c03-03",
+        "source_type": "metrics",
+        "component": "promotion-service",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Retrying calls occupy the promotion outbound connection pool.",
+        "tags": [
+          "promotion-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c03-04",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Checkout p95 rises above eight seconds.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c03-05",
+        "source_type": "experiment",
+        "component": "promotion-service",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Restoring two attempts and a deadline clears latency while the cache topology is unchanged.",
+        "tags": [
+          "promotion-service",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c03-06",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Order-write latency doubles but stays below forty milliseconds.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c03-07",
+        "source_type": "traces",
+        "component": "promotion-service",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Promotion spans dominate checkout request duration.",
+        "tags": [
+          "promotion-service",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c03-08",
+        "source_type": "metrics",
+        "component": "promotion-cache",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for promotion-cache changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "promotion-cache",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c03-09",
+        "source_type": "configuration",
+        "component": "promotion-service",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A config revision raised cache retry attempts from two to fifteen and removed the overall deadline.",
+        "tags": [
+          "promotion-service",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c03-10",
+        "source_type": "experiment",
+        "component": "promotion-cache",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "The rebalance lasts seventy seconds, but checkout remains slow until retrying requests drain; the old retry policy tolerates an identical replay.",
+        "tags": [
+          "promotion-cache",
+          "test"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c04",
+    "title": "Media name-resolution failure",
+    "difficulty": "adversarial_causal",
+    "prompt": "Only media uploads fail to resolve an internal hostname. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c04-01",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Media CPU rises from 22 to 27 percent.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c04-02",
+        "source_type": "metrics",
+        "component": "cluster-dns",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for cluster-dns changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "cluster-dns",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c04-03",
+        "source_type": "configuration",
+        "component": "media-service",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A media deployment points resolv.conf at a retired resolver address.",
+        "tags": [
+          "media-service",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c04-04",
+        "source_type": "metrics",
+        "component": "media-service",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Hostname lookups time out before the upload client connects.",
+        "tags": [
+          "media-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c04-05",
+        "source_type": "change-log",
+        "component": "cluster-dns",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "Cluster DNS latency briefly rises during a node scale event.",
+        "tags": [
+          "cluster-dns",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c04-06",
+        "source_type": "experiment",
+        "component": "media-service",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Removing the media-only resolver override restores uploads without changing cluster DNS.",
+        "tags": [
+          "media-service",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c04-07",
+        "source_type": "experiment",
+        "component": "cluster-dns",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Other namespaces resolve the hostname normally, and packet capture shows media queries bypass cluster DNS.",
+        "tags": [
+          "cluster-dns",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c04-08",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Media uploads fail with name-resolution errors.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c04-09",
+        "source_type": "traces",
+        "component": "media-service",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "No requests reach the media storage service.",
+        "tags": [
+          "media-service",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c04-10",
+        "source_type": "logs",
+        "component": "media-service",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Media pods send internal DNS queries to an address with no listener.",
+        "tags": [
+          "media-service",
+          "logs"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c05",
+    "title": "Webhook TLS rejection",
+    "difficulty": "adversarial_causal",
+    "prompt": "Partners reject outbound webhooks after midnight. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c05-01",
+        "source_type": "experiment",
+        "component": "certificate-automation",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Renewing the certificate restores all partners without firewall changes.",
+        "tags": [
+          "certificate-automation",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c05-02",
+        "source_type": "experiment",
+        "component": "partner firewall",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Partners with unchanged firewalls fail identically, and TCP connections complete before TLS rejection.",
+        "tags": [
+          "partner firewall",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c05-03",
+        "source_type": "change-log",
+        "component": "partner firewall",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "One partner changed firewall rules during the same maintenance window.",
+        "tags": [
+          "partner firewall",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c05-04",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Outbound webhooks are rejected.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c05-05",
+        "source_type": "configuration",
+        "component": "certificate-automation",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A namespace migration left the webhook certificate renewal job suspended.",
+        "tags": [
+          "certificate-automation",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c05-06",
+        "source_type": "traces",
+        "component": "certificate-automation",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Partner clients terminate the connection before HTTP delivery.",
+        "tags": [
+          "certificate-automation",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c05-07",
+        "source_type": "metrics",
+        "component": "certificate-automation",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "TLS handshakes present the expired certificate.",
+        "tags": [
+          "certificate-automation",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c05-08",
+        "source_type": "logs",
+        "component": "certificate-automation",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "The serving certificate passes its not-after timestamp without replacement.",
+        "tags": [
+          "certificate-automation",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c05-09",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Webhook queue depth begins rising after the TLS failures.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c05-10",
+        "source_type": "metrics",
+        "component": "partner firewall",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for partner firewall changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "partner firewall",
+          "metrics"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c06",
+    "title": "Payments and order history slowdown",
+    "difficulty": "adversarial_causal",
+    "prompt": "Payment submissions fail while order history becomes slow. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c06-01",
+        "source_type": "traces",
+        "component": "orders-database",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Order-history query trace",
+        "content": "Order-history queries perform full scans and saturate database CPU.",
+        "tags": [
+          "orders-database",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c06-02",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Inventory cache hit rate drops by one percentage point.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c06-03",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Payment submission fails and order history exceeds its latency SLO.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c06-04",
+        "source_type": "configuration",
+        "component": "orders-database",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Orders schema audit",
+        "content": "A separate schema migration drops the customer-time index used by order history.",
+        "tags": [
+          "orders-database",
+          "schema"
+        ]
+      },
+      {
+        "id": "ev-c06-05",
+        "source_type": "metrics",
+        "component": "service-mesh",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for service-mesh changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "service-mesh",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c06-06",
+        "source_type": "configuration",
+        "component": "payment-client",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Payment client configuration",
+        "content": "A rollout retains a retired payment endpoint after the migration window.",
+        "tags": [
+          "payment-client",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c06-07",
+        "source_type": "experiment",
+        "component": "platform-configuration",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Correcting the endpoint fixes payments; recreating the index separately fixes order history.",
+        "tags": [
+          "platform-configuration",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c06-08",
+        "source_type": "traces",
+        "component": "payment-client",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Payment request trace",
+        "content": "Payment calls target the retired endpoint and fail to connect before submission.",
+        "tags": [
+          "payment-client",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c06-09",
+        "source_type": "experiment",
+        "component": "service-mesh",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Direct requests reproduce each failure; mesh health is normal, and the two symptoms have different start times.",
+        "tags": [
+          "service-mesh",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c06-10",
+        "source_type": "change-log",
+        "component": "service-mesh",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "A service-mesh control-plane restart occurs between the two symptom onsets.",
+        "tags": [
+          "service-mesh",
+          "change"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c07",
+    "title": "Profile connection exhaustion",
+    "difficulty": "adversarial_causal",
+    "prompt": "Profile requests begin timing out after several hours. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c07-01",
+        "source_type": "experiment",
+        "component": "profile-service",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Deploying the cleanup fix returns pool usage to baseline without resizing the database.",
+        "tags": [
+          "profile-service",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c07-02",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Profile requests time out.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c07-03",
+        "source_type": "change-log",
+        "component": "database",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "Database active sessions rise with the incident and suggest server overload.",
+        "tags": [
+          "database",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c07-04",
+        "source_type": "logs",
+        "component": "profile-service",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Each canceled request leaves one database connection checked out.",
+        "tags": [
+          "profile-service",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c07-05",
+        "source_type": "metrics",
+        "component": "database",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for database changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "database",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c07-06",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "The avatar CDN records a minor cache-miss increase.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c07-07",
+        "source_type": "configuration",
+        "component": "profile-service",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A release omits connection cleanup when profile requests are canceled.",
+        "tags": [
+          "profile-service",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c07-08",
+        "source_type": "experiment",
+        "component": "database",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Database CPU remains low and leaked sessions are idle from profile-service only.",
+        "tags": [
+          "database",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c07-09",
+        "source_type": "metrics",
+        "component": "profile-service",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The profile connection pool gradually reaches its maximum.",
+        "tags": [
+          "profile-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c07-10",
+        "source_type": "traces",
+        "component": "profile-service",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "New profile requests wait for a connection until their deadlines expire.",
+        "tags": [
+          "profile-service",
+          "trace"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c08",
+    "title": "Identity token rejection",
+    "difficulty": "adversarial_causal",
+    "prompt": "Freshly issued tokens are rejected as not yet valid by one zone. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c08-01",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Identity database replica lag reaches 140 ms.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c08-02",
+        "source_type": "experiment",
+        "component": "identity-nodes-zone-b",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Restoring time synchronization eliminates rejection without changing keys.",
+        "tags": [
+          "identity-nodes-zone-b",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c08-03",
+        "source_type": "configuration",
+        "component": "identity-nodes-zone-b",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A firewall rule blocks time synchronization traffic from identity nodes in zone B.",
+        "tags": [
+          "identity-nodes-zone-b",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c08-04",
+        "source_type": "metrics",
+        "component": "signing-key rotation",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for signing-key rotation changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "signing-key rotation",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c08-05",
+        "source_type": "experiment",
+        "component": "signing-key rotation",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Rejected tokens verify with both old and new public keys, while their timestamps differ from zone-B wall time.",
+        "tags": [
+          "signing-key rotation",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c08-06",
+        "source_type": "traces",
+        "component": "identity-nodes-zone-b",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Zone-B validators reject otherwise valid fresh tokens.",
+        "tags": [
+          "identity-nodes-zone-b",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c08-07",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Users routed to zone B receive token-not-yet-valid errors.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c08-08",
+        "source_type": "logs",
+        "component": "identity-nodes-zone-b",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Zone-B clocks drift eleven minutes ahead of the signing service.",
+        "tags": [
+          "identity-nodes-zone-b",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c08-09",
+        "source_type": "metrics",
+        "component": "identity-nodes-zone-b",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Tokens minted or validated across zones have inconsistent not-before comparisons.",
+        "tags": [
+          "identity-nodes-zone-b",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c08-10",
+        "source_type": "change-log",
+        "component": "signing-key rotation",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "A signing-key rotation completes near the first rejection.",
+        "tags": [
+          "signing-key rotation",
+          "change"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c09",
+    "title": "Invoice queue stall",
+    "difficulty": "adversarial_causal",
+    "prompt": "Invoice processing stops although consumers are running. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c09-01",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Email delivery has an unrelated provider retry spike.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c09-02",
+        "source_type": "experiment",
+        "component": "invoice-consumer",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Dead-lettering the malformed event immediately resumes the partition.",
+        "tags": [
+          "invoice-consumer",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c09-03",
+        "source_type": "metrics",
+        "component": "message-broker",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for message-broker changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "message-broker",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c09-04",
+        "source_type": "experiment",
+        "component": "message-broker",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Other partitions progress normally and broker publish latency stays healthy; only one offset repeats.",
+        "tags": [
+          "message-broker",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c09-05",
+        "source_type": "traces",
+        "component": "invoice-consumer",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Later valid invoice events cannot be consumed from that partition.",
+        "tags": [
+          "invoice-consumer",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c09-06",
+        "source_type": "logs",
+        "component": "invoice-consumer",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "The poison event fails schema decoding on every attempt and is never committed or dead-lettered.",
+        "tags": [
+          "invoice-consumer",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c09-07",
+        "source_type": "metrics",
+        "component": "invoice-consumer",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The partition remains pinned to the same offset.",
+        "tags": [
+          "invoice-consumer",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c09-08",
+        "source_type": "configuration",
+        "component": "invoice-consumer",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A malformed invoice event enters a partition whose consumer retries failures indefinitely.",
+        "tags": [
+          "invoice-consumer",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c09-09",
+        "source_type": "change-log",
+        "component": "message-broker",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "Broker disk utilization crosses a warning threshold at the same time.",
+        "tags": [
+          "message-broker",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c09-10",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Invoice processing appears stalled.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c10",
+    "title": "Session cache stampede",
+    "difficulty": "adversarial_causal",
+    "prompt": "Login latency spikes at the top of every hour. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c10-01",
+        "source_type": "metrics",
+        "component": "session-service",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The policy database connection pool saturates under the miss burst.",
+        "tags": [
+          "session-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c10-02",
+        "source_type": "logs",
+        "component": "session-service",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "At expiry, concurrent misses trigger duplicate policy database reads.",
+        "tags": [
+          "session-service",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c10-03",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Authentication CPU falls slightly during the incident.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c10-04",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Login latency spikes each hour.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c10-05",
+        "source_type": "experiment",
+        "component": "session-service",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Adding expiry jitter and request coalescing removes the spike with analytics still enabled.",
+        "tags": [
+          "session-service",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c10-06",
+        "source_type": "configuration",
+        "component": "session-service",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "All session-policy entries are written with the same hourly absolute expiry and no refresh jitter.",
+        "tags": [
+          "session-service",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c10-07",
+        "source_type": "experiment",
+        "component": "scheduled analytics",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Disabling analytics does not alter the spike, while cache-miss count jumps exactly at policy expiry.",
+        "tags": [
+          "scheduled analytics",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c10-08",
+        "source_type": "traces",
+        "component": "session-service",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Session validation waits behind database reads.",
+        "tags": [
+          "session-service",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c10-09",
+        "source_type": "change-log",
+        "component": "scheduled analytics",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "An hourly analytics job starts within the same minute.",
+        "tags": [
+          "scheduled analytics",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c10-10",
+        "source_type": "metrics",
+        "component": "scheduled analytics",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for scheduled analytics changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "scheduled analytics",
+          "metrics"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c11",
+    "title": "Worker autoscaling failure",
+    "difficulty": "adversarial_causal",
+    "prompt": "A work queue grows despite low reported utilization. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c11-01",
+        "source_type": "traces",
+        "component": "worker-autoscaler",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Incoming work exceeds the fixed worker throughput.",
+        "tags": [
+          "worker-autoscaler",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c11-02",
+        "source_type": "change-log",
+        "component": "queue-service",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "Queue storage latency increases shortly before backlog growth.",
+        "tags": [
+          "queue-service",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c11-03",
+        "source_type": "metrics",
+        "component": "worker-autoscaler",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The autoscaler keeps the worker deployment at its minimum replica count.",
+        "tags": [
+          "worker-autoscaler",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c11-04",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "The work queue grows continuously.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c11-05",
+        "source_type": "logs",
+        "component": "worker-autoscaler",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Idle auxiliary pods dilute average CPU below the scale-out threshold.",
+        "tags": [
+          "worker-autoscaler",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c11-06",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Worker memory usage is stable.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c11-07",
+        "source_type": "metrics",
+        "component": "queue-service",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for queue-service changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "queue-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c11-08",
+        "source_type": "experiment",
+        "component": "queue-service",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Enqueue and dequeue operation latency remain below limits; replaying the load with queue-depth scaling adds workers promptly.",
+        "tags": [
+          "queue-service",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c11-09",
+        "source_type": "experiment",
+        "component": "worker-autoscaler",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Restoring queue-depth scaling drains the backlog without modifying the queue service.",
+        "tags": [
+          "worker-autoscaler",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c11-10",
+        "source_type": "configuration",
+        "component": "worker-autoscaler",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A configuration change replaces queue-depth scaling with namespace-average CPU.",
+        "tags": [
+          "worker-autoscaler",
+          "configuration"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c12",
+    "title": "Artifact upload disk-full errors",
+    "difficulty": "adversarial_causal",
+    "prompt": "Artifact uploads fail although disk byte usage is below 50 percent. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c12-01",
+        "source_type": "experiment",
+        "component": "artifact-store",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Deleting abandoned temporary files restores uploads without adding capacity.",
+        "tags": [
+          "artifact-store",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c12-02",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Artifact metadata database latency is 5 ms higher.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c12-03",
+        "source_type": "metrics",
+        "component": "artifact-store",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "New upload parts fail when the store cannot create another file.",
+        "tags": [
+          "artifact-store",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c12-04",
+        "source_type": "configuration",
+        "component": "artifact-store",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A cleanup regression leaves one temporary file per multipart retry.",
+        "tags": [
+          "artifact-store",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c12-05",
+        "source_type": "metrics",
+        "component": "storage capacity",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for storage capacity changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "storage capacity",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c12-06",
+        "source_type": "change-log",
+        "component": "storage capacity",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "The storage dashboard shows a recent capacity alert from another volume.",
+        "tags": [
+          "storage capacity",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c12-07",
+        "source_type": "experiment",
+        "component": "storage capacity",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "The affected volume has free bytes but zero free inodes; the capacity alert names a different mount.",
+        "tags": [
+          "storage capacity",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c12-08",
+        "source_type": "traces",
+        "component": "artifact-store",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Multipart uploads abort before storing artifact bytes.",
+        "tags": [
+          "artifact-store",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c12-09",
+        "source_type": "logs",
+        "component": "artifact-store",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Millions of zero-byte temporary files consume all filesystem inodes.",
+        "tags": [
+          "artifact-store",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c12-10",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Artifact uploads return disk-full errors.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c13",
+    "title": "Report service deadlock",
+    "difficulty": "adversarial_causal",
+    "prompt": "Report generation hangs under a particular concurrent workload. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c13-01",
+        "source_type": "experiment",
+        "component": "database locks",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "The waits are application mutexes and database transactions are idle; thread dumps show the inverse lock order.",
+        "tags": [
+          "database locks",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c13-02",
+        "source_type": "change-log",
+        "component": "database locks",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "Database lock-wait graphs appear when reports stop.",
+        "tags": [
+          "database locks",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c13-03",
+        "source_type": "configuration",
+        "component": "report-service",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A refactor makes export acquire report then account locks while cancellation acquires account then report.",
+        "tags": [
+          "report-service",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c13-04",
+        "source_type": "logs",
+        "component": "report-service",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Concurrent export and cancellation each hold one lock while waiting for the other.",
+        "tags": [
+          "report-service",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c13-05",
+        "source_type": "metrics",
+        "component": "database locks",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for database locks changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "database locks",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c13-06",
+        "source_type": "traces",
+        "component": "report-service",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "No worker remains available to complete queued reports.",
+        "tags": [
+          "report-service",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c13-07",
+        "source_type": "metrics",
+        "component": "report-service",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "All report worker threads eventually block in the two lock waits.",
+        "tags": [
+          "report-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c13-08",
+        "source_type": "experiment",
+        "component": "report-service",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Enforcing one lock order removes hangs under the same database workload.",
+        "tags": [
+          "report-service",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c13-09",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Report generation hangs.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c13-10",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "PDF renderer CPU briefly reaches 70 percent.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c14",
+    "title": "API throttling storm",
+    "difficulty": "adversarial_causal",
+    "prompt": "A client exceeds its API quota for minutes after a brief rate limit. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c14-01",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "A regional latency alert clears before throttling begins.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c14-02",
+        "source_type": "experiment",
+        "component": "api-gateway",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Other clients using Retry-After recover normally, and the gateway enforces the unchanged documented quota.",
+        "tags": [
+          "api-gateway",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c14-03",
+        "source_type": "metrics",
+        "component": "api-gateway",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for api-gateway changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "api-gateway",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c14-04",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "The client remains throttled.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c14-05",
+        "source_type": "configuration",
+        "component": "api-client",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A client library update replaces server-directed backoff with immediate parallel retries.",
+        "tags": [
+          "api-client",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c14-06",
+        "source_type": "experiment",
+        "component": "api-client",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Restoring Retry-After handling ends the storm without a gateway rollback.",
+        "tags": [
+          "api-client",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c14-07",
+        "source_type": "change-log",
+        "component": "api-gateway",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "A gateway deployment precedes the first 429.",
+        "tags": [
+          "api-gateway",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c14-08",
+        "source_type": "logs",
+        "component": "api-client",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "The first 429 response triggers many immediate retries for each request.",
+        "tags": [
+          "api-client",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c14-09",
+        "source_type": "metrics",
+        "component": "api-client",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Retry traffic consumes the client's quota as soon as it replenishes.",
+        "tags": [
+          "api-client",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c14-10",
+        "source_type": "traces",
+        "component": "api-client",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Sustained 429 responses prevent useful requests from completing.",
+        "tags": [
+          "api-client",
+          "trace"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c15",
+    "title": "Search result disappearance",
+    "difficulty": "adversarial_causal",
+    "prompt": "Some valid products disappear from search after a gradual flag rollout. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c15-01",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Valid products disappear from search.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c15-02",
+        "source_type": "experiment",
+        "component": "search-service",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Disabling the flag restores products without reindexing.",
+        "tags": [
+          "search-service",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c15-03",
+        "source_type": "experiment",
+        "component": "indexing pipeline",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Direct index queries contain the missing products, and unflagged requests return them from the same index version.",
+        "tags": [
+          "indexing pipeline",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c15-04",
+        "source_type": "metrics",
+        "component": "indexing pipeline",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for indexing pipeline changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "indexing pipeline",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c15-05",
+        "source_type": "configuration",
+        "component": "search-service",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A new ranking flag rolls from 5 to 100 percent and negates the in-stock predicate.",
+        "tags": [
+          "search-service",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c15-06",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Recommendation click-through changes during a promotion.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c15-07",
+        "source_type": "logs",
+        "component": "search-service",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Flagged requests filter products whose availability field is true.",
+        "tags": [
+          "search-service",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c15-08",
+        "source_type": "traces",
+        "component": "search-service",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Search responses omit those products even though the index contains them.",
+        "tags": [
+          "search-service",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c15-09",
+        "source_type": "metrics",
+        "component": "search-service",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The candidate set loses valid in-stock products before ranking.",
+        "tags": [
+          "search-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c15-10",
+        "source_type": "change-log",
+        "component": "indexing pipeline",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "Index freshness degrades during the rollout.",
+        "tags": [
+          "indexing pipeline",
+          "change"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c16",
+    "title": "Consumer failures after schema rollout",
+    "difficulty": "adversarial_causal",
+    "prompt": "Legacy consumers reject newly published account events. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c16-01",
+        "source_type": "change-log",
+        "component": "schema-registry",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "The schema registry restarts during the rollout.",
+        "tags": [
+          "schema-registry",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c16-02",
+        "source_type": "experiment",
+        "component": "schema-registry",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Consumers retrieve the schema successfully; validation shows the producer payload violates the registered old type.",
+        "tags": [
+          "schema-registry",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c16-03",
+        "source_type": "traces",
+        "component": "event-producer",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Their partitions accumulate lag behind the incompatible event.",
+        "tags": [
+          "event-producer",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c16-04",
+        "source_type": "configuration",
+        "component": "event-producer",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "The account producer changes balance from an integer to an object without a new schema version.",
+        "tags": [
+          "event-producer",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c16-05",
+        "source_type": "metrics",
+        "component": "schema-registry",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for schema-registry changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "schema-registry",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c16-06",
+        "source_type": "logs",
+        "component": "event-producer",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "New events encode balance in a representation legacy consumers cannot deserialize.",
+        "tags": [
+          "event-producer",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c16-07",
+        "source_type": "experiment",
+        "component": "event-producer",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Publishing the old representation resumes consumers without changing the registry.",
+        "tags": [
+          "event-producer",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c16-08",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "One consumer host reports elevated network retransmits.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c16-09",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Legacy account consumers stop processing.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c16-10",
+        "source_type": "metrics",
+        "component": "event-producer",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Legacy consumers reject and retry each new event.",
+        "tags": [
+          "event-producer",
+          "metrics"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c17",
+    "title": "Daily settlement runs twice",
+    "difficulty": "adversarial_causal",
+    "prompt": "Daily settlement executes twice on daylight-saving transition day. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c17-01",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Daily settlement executes twice.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c17-02",
+        "source_type": "change-log",
+        "component": "operator replay",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "An operator logs into the scheduler near the second execution.",
+        "tags": [
+          "operator replay",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c17-03",
+        "source_type": "metrics",
+        "component": "operator replay",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for operator replay changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "operator replay",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c17-04",
+        "source_type": "experiment",
+        "component": "settlement-scheduler",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Adding a settlement-date uniqueness key prevents duplication on a clock-transition replay.",
+        "tags": [
+          "settlement-scheduler",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c17-05",
+        "source_type": "metrics",
+        "component": "settlement-scheduler",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Both occurrences enqueue an identical settlement date.",
+        "tags": [
+          "settlement-scheduler",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c17-06",
+        "source_type": "logs",
+        "component": "settlement-scheduler",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "The local 01:30 timestamp occurs twice with different UTC offsets.",
+        "tags": [
+          "settlement-scheduler",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c17-07",
+        "source_type": "traces",
+        "component": "settlement-scheduler",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Workers accept both jobs because no date-level idempotency key exists.",
+        "tags": [
+          "settlement-scheduler",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c17-08",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Bank API latency rises after both jobs start.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c17-09",
+        "source_type": "configuration",
+        "component": "settlement-scheduler",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "The scheduler evaluates a local 01:30 cron expression during a fall-back transition.",
+        "tags": [
+          "settlement-scheduler",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c17-10",
+        "source_type": "experiment",
+        "component": "operator replay",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Audit logs show no replay command, while enqueue records carry the two distinct UTC offsets.",
+        "tags": [
+          "operator replay",
+          "test"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c18",
+    "title": "Healthy pods removed from rotation",
+    "difficulty": "adversarial_causal",
+    "prompt": "Application pods are healthy but receive no production traffic. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c18-01",
+        "source_type": "change-log",
+        "component": "application deployment",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "An application image deployment finishes just before traffic loss.",
+        "tags": [
+          "application deployment",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c18-02",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Database connection count falls because traffic stops.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c18-03",
+        "source_type": "configuration",
+        "component": "load-balancer",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A load-balancer change moves health checks from /healthz to /status, which requires authentication.",
+        "tags": [
+          "load-balancer",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c18-04",
+        "source_type": "metrics",
+        "component": "load-balancer",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The load balancer marks all application backends unhealthy.",
+        "tags": [
+          "load-balancer",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c18-05",
+        "source_type": "traces",
+        "component": "load-balancer",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Requests have no eligible backend target.",
+        "tags": [
+          "load-balancer",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c18-06",
+        "source_type": "experiment",
+        "component": "application deployment",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Direct authenticated requests to the new pods succeed, and reverting only the health-check path restores backend health.",
+        "tags": [
+          "application deployment",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c18-07",
+        "source_type": "metrics",
+        "component": "application deployment",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for application deployment changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "application deployment",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c18-08",
+        "source_type": "experiment",
+        "component": "load-balancer",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Pointing probes back to /healthz restores traffic without rolling back the application.",
+        "tags": [
+          "load-balancer",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c18-09",
+        "source_type": "logs",
+        "component": "load-balancer",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Unauthenticated health probes receive 401 from every otherwise healthy pod.",
+        "tags": [
+          "load-balancer",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c18-10",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Production traffic receives gateway errors.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c19",
+    "title": "Missing writes on immediate reads",
+    "difficulty": "adversarial_causal",
+    "prompt": "Users save settings successfully but immediately read old values. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c19-01",
+        "source_type": "metrics",
+        "component": "browser cache",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for browser cache changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "browser cache",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c19-02",
+        "source_type": "experiment",
+        "component": "settings-service",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Pinning post-write reads to the primary removes staleness without a frontend rollback.",
+        "tags": [
+          "settings-service",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c19-03",
+        "source_type": "traces",
+        "component": "settings-service",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Those reads return the preceding settings version.",
+        "tags": [
+          "settings-service",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c19-04",
+        "source_type": "change-log",
+        "component": "browser cache",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "A frontend cache release occurs near the first stale read.",
+        "tags": [
+          "browser cache",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c19-05",
+        "source_type": "metrics",
+        "component": "settings-service",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Immediate follow-up reads are routed to the lagging replica.",
+        "tags": [
+          "settings-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c19-06",
+        "source_type": "logs",
+        "component": "settings-service",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "The primary commits updates while one replica remains several seconds behind.",
+        "tags": [
+          "settings-service",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c19-07",
+        "source_type": "experiment",
+        "component": "browser cache",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Responses include no-cache and direct API reads reproduce staleness only when routed to the lagging replica.",
+        "tags": [
+          "browser cache",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c19-08",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Users observe old values after successful saves.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c19-09",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Settings write latency remains normal.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c19-10",
+        "source_type": "configuration",
+        "component": "settings-service",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A routing change sends all settings reads to replicas without session consistency.",
+        "tags": [
+          "settings-service",
+          "configuration"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c20",
+    "title": "Outbound connection failures",
+    "difficulty": "adversarial_causal",
+    "prompt": "Many unrelated services lose outbound connectivity from one node pool. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c20-01",
+        "source_type": "metrics",
+        "component": "node-pool-egress",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The shared NAT gateway exhausts available source-port mappings.",
+        "tags": [
+          "node-pool-egress",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c20-02",
+        "source_type": "metrics",
+        "component": "external provider",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for external provider changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "external provider",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c20-03",
+        "source_type": "experiment",
+        "component": "node-pool-egress",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Restoring connection reuse drops NAT allocation and restores all providers.",
+        "tags": [
+          "node-pool-egress",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c20-04",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Multiple services lose outbound connectivity.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c20-05",
+        "source_type": "traces",
+        "component": "node-pool-egress",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "New outbound TCP connections from the pool fail intermittently.",
+        "tags": [
+          "node-pool-egress",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c20-06",
+        "source_type": "experiment",
+        "component": "external provider",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Connections to unrelated providers fail from the same pool but succeed from other pools; NAT allocation is at its limit.",
+        "tags": [
+          "external provider",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c20-07",
+        "source_type": "change-log",
+        "component": "external provider",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "The largest external provider reports a regional incident.",
+        "tags": [
+          "external provider",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c20-08",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Node CPU remains below 40 percent.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c20-09",
+        "source_type": "logs",
+        "component": "node-pool-egress",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Each request opens a new outbound connection and leaves ports in TIME_WAIT.",
+        "tags": [
+          "node-pool-egress",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c20-10",
+        "source_type": "configuration",
+        "component": "node-pool-egress",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A base-image update disables HTTP keep-alive for services in one node pool.",
+        "tags": [
+          "node-pool-egress",
+          "configuration"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c21",
+    "title": "Node outage from logging",
+    "difficulty": "adversarial_causal",
+    "prompt": "A node becomes NotReady and evicts several unrelated pods. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c21-01",
+        "source_type": "traces",
+        "component": "log-agent",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Kubelet loses writable disk space and marks the node under disk pressure.",
+        "tags": [
+          "log-agent",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c21-02",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "The node becomes NotReady and pods are evicted.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c21-03",
+        "source_type": "change-log",
+        "component": "container runtime",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "A container-runtime warning appears shortly before NotReady.",
+        "tags": [
+          "container runtime",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c21-04",
+        "source_type": "metrics",
+        "component": "log-agent",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Recursive logs rapidly fill the node filesystem.",
+        "tags": [
+          "log-agent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c21-05",
+        "source_type": "experiment",
+        "component": "container runtime",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Runtime storage growth is entirely the log-agent file, and runtime health recovers after that file is removed.",
+        "tags": [
+          "container runtime",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c21-06",
+        "source_type": "experiment",
+        "component": "log-agent",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Excluding the self-log stops disk growth and restores node readiness.",
+        "tags": [
+          "log-agent",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c21-07",
+        "source_type": "configuration",
+        "component": "log-agent",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A logging rule begins ingesting the agent's own failed-delivery log.",
+        "tags": [
+          "log-agent",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c21-08",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "One evicted pod had restarted earlier for an unrelated probe failure.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c21-09",
+        "source_type": "metrics",
+        "component": "container runtime",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for container runtime changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "container runtime",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c21-10",
+        "source_type": "logs",
+        "component": "log-agent",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Each delivery error produces another collected record and another delivery error.",
+        "tags": [
+          "log-agent",
+          "logs"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c22",
+    "title": "Telemetry-induced pauses",
+    "difficulty": "adversarial_causal",
+    "prompt": "Request latency develops long periodic pauses after adding a metric label. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c22-01",
+        "source_type": "experiment",
+        "component": "database checkpoint",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Slow traces spend the pause inside the API process before database calls, and checkpoint duration is unchanged.",
+        "tags": [
+          "database checkpoint",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c22-02",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Network packet loss stays below 0.01 percent.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c22-03",
+        "source_type": "traces",
+        "component": "api-service",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Application threads pause during full collections.",
+        "tags": [
+          "api-service",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c22-04",
+        "source_type": "configuration",
+        "component": "api-service",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A telemetry change adds raw user_id to a request counter label.",
+        "tags": [
+          "api-service",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c22-05",
+        "source_type": "experiment",
+        "component": "api-service",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Removing the user_id label stabilizes the heap and removes pauses.",
+        "tags": [
+          "api-service",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c22-06",
+        "source_type": "change-log",
+        "component": "database checkpoint",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "Database checkpoints occur at a similar interval.",
+        "tags": [
+          "database checkpoint",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c22-07",
+        "source_type": "metrics",
+        "component": "api-service",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Heap growth causes increasingly frequent full garbage collections.",
+        "tags": [
+          "api-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c22-08",
+        "source_type": "logs",
+        "component": "api-service",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Every active user creates new long-lived metric series in process memory.",
+        "tags": [
+          "api-service",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c22-09",
+        "source_type": "metrics",
+        "component": "database checkpoint",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for database checkpoint changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "database checkpoint",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c22-10",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Request latency shows long periodic pauses.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c23",
+    "title": "Fallback blocked by circuit breaker",
+    "difficulty": "adversarial_causal",
+    "prompt": "Requests fail even though a healthy fallback service is available. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c23-01",
+        "source_type": "traces",
+        "component": "routing-service",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "No request reaches the healthy fallback service.",
+        "tags": [
+          "routing-service",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c23-02",
+        "source_type": "experiment",
+        "component": "fallback-service",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Fallback health probes and direct calls succeed, while failed traces show local circuit-open errors with no fallback span.",
+        "tags": [
+          "fallback-service",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c23-03",
+        "source_type": "configuration",
+        "component": "routing-service",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A configuration migration assigns primary and fallback calls the same breaker key.",
+        "tags": [
+          "routing-service",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c23-04",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Routing requests fail instead of degrading to fallback.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c23-05",
+        "source_type": "metrics",
+        "component": "fallback-service",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for fallback-service changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "fallback-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c23-06",
+        "source_type": "change-log",
+        "component": "fallback-service",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "Fallback CPU rises shortly before request failures.",
+        "tags": [
+          "fallback-service",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c23-07",
+        "source_type": "metrics",
+        "component": "routing-service",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Fallback calls consult the same open breaker and are rejected locally.",
+        "tags": [
+          "routing-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c23-08",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Primary error rate remains high as expected.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c23-09",
+        "source_type": "experiment",
+        "component": "routing-service",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Using separate breaker keys restores fallback without scaling it.",
+        "tags": [
+          "routing-service",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c23-10",
+        "source_type": "logs",
+        "component": "routing-service",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Primary failures open the shared circuit breaker.",
+        "tags": [
+          "routing-service",
+          "logs"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c24",
+    "title": "Ledger balance regression",
+    "difficulty": "adversarial_causal",
+    "prompt": "A small set of account balances move backward after failover. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c24-01",
+        "source_type": "logs",
+        "component": "ledger-consumer",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "An older balance event arrives after a newer event for the same account.",
+        "tags": [
+          "ledger-consumer",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c24-02",
+        "source_type": "change-log",
+        "component": "ledger database",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "A database failover occurs at the first reported regression.",
+        "tags": [
+          "ledger database",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c24-03",
+        "source_type": "experiment",
+        "component": "ledger-consumer",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Rejecting lower sequence numbers prevents regression during failover replay.",
+        "tags": [
+          "ledger-consumer",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c24-04",
+        "source_type": "traces",
+        "component": "ledger-consumer",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Stored balance regresses to the older event value.",
+        "tags": [
+          "ledger-consumer",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c24-05",
+        "source_type": "configuration",
+        "component": "ledger-consumer",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A failover changes delivery order for retried ledger events.",
+        "tags": [
+          "ledger-consumer",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c24-06",
+        "source_type": "metrics",
+        "component": "ledger database",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for ledger database changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "ledger database",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c24-07",
+        "source_type": "experiment",
+        "component": "ledger database",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Commit ordering is correct in the database; consumer logs show sequence 411 applied after 412.",
+        "tags": [
+          "ledger database",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c24-08",
+        "source_type": "metrics",
+        "component": "ledger-consumer",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The consumer overwrites current state without comparing sequence numbers.",
+        "tags": [
+          "ledger-consumer",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c24-09",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Notification delivery is delayed during failover.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c24-10",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Users see balances move backward.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c25",
+    "title": "Encrypted record read failures",
+    "difficulty": "adversarial_causal",
+    "prompt": "New records are readable, but records written yesterday fail decryption. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c25-01",
+        "source_type": "metrics",
+        "component": "storage corruption",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for storage corruption changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "storage corruption",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c25-02",
+        "source_type": "experiment",
+        "component": "storage corruption",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Affected records span healthy shards and pass ciphertext checksums; all share the deleted key version.",
+        "tags": [
+          "storage corruption",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c25-03",
+        "source_type": "metrics",
+        "component": "key-management",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Readers cannot retrieve key material for those ciphertexts.",
+        "tags": [
+          "key-management",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c25-04",
+        "source_type": "traces",
+        "component": "key-management",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Decryption fails before record parsing.",
+        "tags": [
+          "key-management",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c25-05",
+        "source_type": "configuration",
+        "component": "key-management",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A key-rotation job deletes the old key immediately instead of retaining it for the configured window.",
+        "tags": [
+          "key-management",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c25-06",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "New-key encryption latency is unchanged.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c25-07",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Older records become unreadable while new records remain healthy.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c25-08",
+        "source_type": "logs",
+        "component": "key-management",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Yesterday's records still reference the deleted key version.",
+        "tags": [
+          "key-management",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c25-09",
+        "source_type": "change-log",
+        "component": "storage corruption",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "A storage checksum alarm fires for one shard.",
+        "tags": [
+          "storage corruption",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c25-10",
+        "source_type": "experiment",
+        "component": "key-management",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Restoring the previous key version makes old records readable without restoring storage.",
+        "tags": [
+          "key-management",
+          "experiment"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c26",
+    "title": "Private content leaked through CDN",
+    "difficulty": "adversarial_causal",
+    "prompt": "Some users receive another user's personalized page. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c26-01",
+        "source_type": "configuration",
+        "component": "cdn-configuration",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A CDN rule starts caching personalized HTML by URL path alone.",
+        "tags": [
+          "cdn-configuration",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c26-02",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Users see another account's personalized page.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c26-03",
+        "source_type": "change-log",
+        "component": "application session store",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "Session-store latency rises during the first report.",
+        "tags": [
+          "application session store",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c26-04",
+        "source_type": "metrics",
+        "component": "application session store",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for application session store changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "application session store",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c26-05",
+        "source_type": "experiment",
+        "component": "application session store",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Leaked responses carry another account's correct server rendering and an Age header; origin requests remain correctly isolated.",
+        "tags": [
+          "application session store",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c26-06",
+        "source_type": "traces",
+        "component": "cdn-configuration",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Subsequent users receive the cached first response.",
+        "tags": [
+          "cdn-configuration",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c26-07",
+        "source_type": "experiment",
+        "component": "cdn-configuration",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Adding account and locale variation to the cache key stops leakage without changing sessions.",
+        "tags": [
+          "cdn-configuration",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c26-08",
+        "source_type": "metrics",
+        "component": "cdn-configuration",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The first personalized response populates that shared object.",
+        "tags": [
+          "cdn-configuration",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c26-09",
+        "source_type": "logs",
+        "component": "cdn-configuration",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Responses for different accounts map to the same cache object.",
+        "tags": [
+          "cdn-configuration",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c26-10",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Static asset cache hit rate also rises.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c27",
+    "title": "Duplicate cleanup jobs",
+    "difficulty": "adversarial_causal",
+    "prompt": "Two workers delete the same expired resources concurrently. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c27-01",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Deletion API latency rises under duplicate load.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c27-02",
+        "source_type": "change-log",
+        "component": "scheduler",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "The scheduler emits two start notifications.",
+        "tags": [
+          "scheduler",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c27-03",
+        "source_type": "experiment",
+        "component": "scheduler",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Both notifications originate from different valid lease holders; only one schedule record exists.",
+        "tags": [
+          "scheduler",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c27-04",
+        "source_type": "experiment",
+        "component": "cleanup-leader-election",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Extending the lease beyond renewal pauses prevents duplicate workers under the same schedule.",
+        "tags": [
+          "cleanup-leader-election",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c27-05",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Duplicate cleanup operations occur.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c27-06",
+        "source_type": "logs",
+        "component": "cleanup-leader-election",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "The active leader pauses beyond the lease duration while continuing its current batch afterward.",
+        "tags": [
+          "cleanup-leader-election",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c27-07",
+        "source_type": "configuration",
+        "component": "cleanup-leader-election",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "The leader lease is shortened below observed garbage-collection pauses.",
+        "tags": [
+          "cleanup-leader-election",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c27-08",
+        "source_type": "traces",
+        "component": "cleanup-leader-election",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Both workers process overlapping resource IDs.",
+        "tags": [
+          "cleanup-leader-election",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c27-09",
+        "source_type": "metrics",
+        "component": "scheduler",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for scheduler changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "scheduler",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c27-10",
+        "source_type": "metrics",
+        "component": "cleanup-leader-election",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "A second worker acquires the expired lease and starts the same scheduled batch.",
+        "tags": [
+          "cleanup-leader-election",
+          "metrics"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c28",
+    "title": "Large request network hangs",
+    "difficulty": "adversarial_causal",
+    "prompt": "Small requests succeed, but requests above 1,400 bytes hang across a new tunnel. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c28-01",
+        "source_type": "configuration",
+        "component": "network-tunnel",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A tunnel change adds encapsulation overhead without lowering interface MTU, while ICMP fragmentation-needed is filtered.",
+        "tags": [
+          "network-tunnel",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c28-02",
+        "source_type": "change-log",
+        "component": "application serializer",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "A serializer release increases typical request size.",
+        "tags": [
+          "application serializer",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c28-03",
+        "source_type": "metrics",
+        "component": "application serializer",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for application serializer changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "application serializer",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c28-04",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Server CPU is lower during failed requests.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c28-05",
+        "source_type": "traces",
+        "component": "network-tunnel",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "TCP retransmits the same large segments until request timeout.",
+        "tags": [
+          "network-tunnel",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c28-06",
+        "source_type": "logs",
+        "component": "network-tunnel",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Large packets exceed the effective tunnel path MTU.",
+        "tags": [
+          "network-tunnel",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c28-07",
+        "source_type": "experiment",
+        "component": "application serializer",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "The old serializer also hangs when padded above the threshold, while new small payloads succeed.",
+        "tags": [
+          "application serializer",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c28-08",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Large requests hang while small requests succeed.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c28-09",
+        "source_type": "metrics",
+        "component": "network-tunnel",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Oversized packets are dropped and path-MTU discovery receives no feedback.",
+        "tags": [
+          "network-tunnel",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c28-10",
+        "source_type": "experiment",
+        "component": "network-tunnel",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Lowering tunnel MTU restores large requests without reverting serialization.",
+        "tags": [
+          "network-tunnel",
+          "experiment"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c29",
+    "title": "Fallback overload cascade",
+    "difficulty": "adversarial_causal",
+    "prompt": "A minor recommendation outage expands into homepage failures. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c29-01",
+        "source_type": "metrics",
+        "component": "recommendation-service",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for recommendation-service changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "recommendation-service",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c29-02",
+        "source_type": "traces",
+        "component": "homepage-service",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Homepage requests wait behind the fallback fan-out.",
+        "tags": [
+          "homepage-service",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c29-03",
+        "source_type": "experiment",
+        "component": "homepage-service",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Bounding and asynchronously serving fallback restores homepages while recommendations remain degraded.",
+        "tags": [
+          "homepage-service",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c29-04",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Catalog database cache hit rate falls under extra traffic.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c29-05",
+        "source_type": "configuration",
+        "component": "homepage-service",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A fallback change queries every catalog shard when recommendations time out.",
+        "tags": [
+          "homepage-service",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c29-06",
+        "source_type": "experiment",
+        "component": "recommendation-service",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "Disabling recommendations without fallback keeps homepages healthy; replaying the fan-out against healthy recommendations still saturates pools.",
+        "tags": [
+          "recommendation-service",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c29-07",
+        "source_type": "change-log",
+        "component": "recommendation-service",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "Recommendation pods restart at the incident start.",
+        "tags": [
+          "recommendation-service",
+          "change"
+        ]
+      },
+      {
+        "id": "ev-c29-08",
+        "source_type": "logs",
+        "component": "homepage-service",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Each recommendation timeout triggers parallel synchronous calls to all catalog shards.",
+        "tags": [
+          "homepage-service",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c29-09",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Homepage requests fail far beyond the recommendation feature.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c29-10",
+        "source_type": "metrics",
+        "component": "homepage-service",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "Fallback traffic saturates homepage and catalog connection pools.",
+        "tags": [
+          "homepage-service",
+          "metrics"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c30",
+    "title": "CPU throttling with low utilization",
+    "difficulty": "adversarial_causal",
+    "prompt": "A latency-sensitive service reports low average CPU but high tail latency on one node. Identify every material root cause and trace the propagation to the symptom.",
+    "source_types": [
+      "change-log",
+      "configuration",
+      "experiment",
+      "logs",
+      "metrics",
+      "traces"
+    ],
+    "answer_contract": {
+      "root_event_ids": [
+        "evidence ID"
+      ],
+      "causal_paths": [
+        [
+          "ordered evidence IDs from one root to symptom"
+        ]
+      ],
+      "supporting_evidence_ids": [
+        "evidence ID"
+      ],
+      "counterevidence_ids": [
+        "evidence ID that tests or rejects alternatives"
+      ],
+      "rejected_distractor_ids": [
+        "evidence ID"
+      ],
+      "confidence": "number between 0 and 1",
+      "explanation": "short causal explanation"
+    },
+    "evidence": [
+      {
+        "id": "ev-c30-01",
+        "source_type": "configuration",
+        "component": "node-cgroup",
+        "timestamp": "2026-07-15T12:05:00Z",
+        "summary": "Configuration audit record",
+        "content": "A node-pool policy applies a 100m CPU quota to the service despite a 2-core request.",
+        "tags": [
+          "node-cgroup",
+          "configuration"
+        ]
+      },
+      {
+        "id": "ev-c30-02",
+        "source_type": "experiment",
+        "component": "noisy neighbor",
+        "timestamp": "2026-07-15T12:04:00Z",
+        "summary": "Isolation test result",
+        "content": "The batch pod's removal does not change throttled-time counters; moving the service preserves latency until its quota is corrected.",
+        "tags": [
+          "noisy neighbor",
+          "test"
+        ]
+      },
+      {
+        "id": "ev-c30-03",
+        "source_type": "metrics",
+        "component": "unrelated-component",
+        "timestamp": "2026-07-15T12:10:00Z",
+        "summary": "Adjacent system metric",
+        "content": "Memory bandwidth counters remain normal.",
+        "tags": [
+          "adjacent",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c30-04",
+        "source_type": "metrics",
+        "component": "noisy neighbor",
+        "timestamp": "2026-07-15T12:03:00Z",
+        "summary": "Component monitoring signal",
+        "content": "Monitoring for noisy neighbor changes at the same time, but does not establish propagation to the symptom.",
+        "tags": [
+          "noisy neighbor",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c30-05",
+        "source_type": "logs",
+        "component": "node-cgroup",
+        "timestamp": "2026-07-15T12:06:00Z",
+        "summary": "Component log pattern",
+        "content": "Short request bursts consume the small quota early in each enforcement period.",
+        "tags": [
+          "node-cgroup",
+          "logs"
+        ]
+      },
+      {
+        "id": "ev-c30-06",
+        "source_type": "metrics",
+        "component": "node-cgroup",
+        "timestamp": "2026-07-15T12:07:00Z",
+        "summary": "Resource-state observation",
+        "content": "The kernel throttles the service until the next quota period.",
+        "tags": [
+          "node-cgroup",
+          "metrics"
+        ]
+      },
+      {
+        "id": "ev-c30-07",
+        "source_type": "traces",
+        "component": "node-cgroup",
+        "timestamp": "2026-07-15T12:08:00Z",
+        "summary": "Request trace segment",
+        "content": "Requests accumulate during throttled intervals.",
+        "tags": [
+          "node-cgroup",
+          "trace"
+        ]
+      },
+      {
+        "id": "ev-c30-08",
+        "source_type": "experiment",
+        "component": "node-cgroup",
+        "timestamp": "2026-07-15T12:09:00Z",
+        "summary": "Mitigation experiment",
+        "content": "Correcting the inherited quota removes throttling and tail latency on the same node.",
+        "tags": [
+          "node-cgroup",
+          "experiment"
+        ]
+      },
+      {
+        "id": "ev-c30-09",
+        "source_type": "metrics",
+        "component": "user-impact",
+        "timestamp": "2026-07-15T12:01:00Z",
+        "summary": "Service-level observation",
+        "content": "Tail latency rises despite low time-averaged CPU utilization.",
+        "tags": [
+          "service",
+          "impact"
+        ]
+      },
+      {
+        "id": "ev-c30-10",
+        "source_type": "change-log",
+        "component": "noisy neighbor",
+        "timestamp": "2026-07-15T12:02:00Z",
+        "summary": "Concurrent change record",
+        "content": "A batch pod starts on the same node before latency rises.",
+        "tags": [
+          "noisy neighbor",
+          "change"
+        ]
+      }
+    ]
+  }
+]

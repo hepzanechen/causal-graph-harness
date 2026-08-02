@@ -1,0 +1,50 @@
+{
+  "suite": "causal-graph-paired30-v1",
+  "status": "frozen-before-agent-runs",
+  "case_ids": [
+    "c01", "c02", "c03", "c04", "c05", "c06", "c07", "c08", "c09", "c10",
+    "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19", "c20",
+    "c21", "c22", "c23", "c24", "c25", "c26", "c27", "c28", "c29", "c30"
+  ],
+  "conditions": {
+    "bare": {"causal_graph_instructions": false, "causal_graph_scripts": false},
+    "graph": {"causal_graph_instructions": true, "causal_graph_scripts": true}
+  },
+  "model": "opencode/deepseek-v4-flash",
+  "agent": "build",
+  "treatment_git_revision": "018fc5a",
+  "repetitions": 3,
+  "integrity_wave_repetitions": [1],
+  "launch_seed": 20260803,
+  "limits": {
+    "wall_time_seconds": 1200,
+    "search_calls": 12,
+    "evidence_reads": 12,
+    "live_web": false,
+    "parallel_runs": 4
+  },
+  "shared_instruction": "Investigate the incident using only the sealed evidence broker in this run directory. Identify every material root cause, trace each causal path to the symptom, test attractive alternatives, cite opaque evidence IDs, and return only one JSON object matching answer_contract.",
+  "isolation": {
+    "fresh_context_per_run": true,
+    "fresh_graph_state_per_run": true,
+    "one_public_case_per_sandbox": true,
+    "agent_can_access_gold": false,
+    "agent_can_access_other_cases": false,
+    "agent_can_access_other_runs": false
+  },
+  "primary_metrics": ["root_f1", "chain_f1"],
+  "secondary_metrics": [
+    "joint_success", "critical_evidence_f1", "falsifying_evidence_recall",
+    "distractor_rejection_recall", "distractor_adoption_rate",
+    "brier_joint_success", "input_tokens", "output_tokens", "model_cost",
+    "agent_steps", "wall_time_seconds"
+  ],
+  "analysis": {
+    "unit": "case",
+    "paired": true,
+    "bootstrap": "sample cases, then repetitions within cases",
+    "confidence_interval": 0.95,
+    "strict_success_sensitivity": "paired binary comparison",
+    "multiple_testing": "two co-primary metrics reported with Holm correction"
+  }
+}

@@ -1,0 +1,1536 @@
+{
+  "c01": {
+    "accepted_causal_event_ids": [
+      "ev-c01-08",
+      "ev-c01-07",
+      "ev-c01-01",
+      "ev-c01-06",
+      "ev-c01-02",
+      "ev-c01-03"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c01-02",
+      "ev-c01-09",
+      "ev-c01-08",
+      "ev-c01-07",
+      "ev-c01-01",
+      "ev-c01-06",
+      "ev-c01-03"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c01-09",
+      "ev-c01-08",
+      "ev-c01-07",
+      "ev-c01-01",
+      "ev-c01-06",
+      "ev-c01-03"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c01-10",
+      "ev-c01-05",
+      "ev-c01-04"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c01-09"
+    ],
+    "required_paths": [
+      [
+        "ev-c01-08",
+        "ev-c01-07",
+        "ev-c01-01",
+        "ev-c01-06",
+        "ev-c01-02"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c01-08"
+    ],
+    "root_label": {
+      "component": "image-api",
+      "fault": "an unbounded decoded-image cache"
+    }
+  },
+  "c02": {
+    "accepted_causal_event_ids": [
+      "ev-c02-08",
+      "ev-c02-04",
+      "ev-c02-05",
+      "ev-c02-10",
+      "ev-c02-06",
+      "ev-c02-03"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c02-06",
+      "ev-c02-02",
+      "ev-c02-08",
+      "ev-c02-04",
+      "ev-c02-05",
+      "ev-c02-10",
+      "ev-c02-03"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c02-02",
+      "ev-c02-08",
+      "ev-c02-04",
+      "ev-c02-05",
+      "ev-c02-10",
+      "ev-c02-03"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c02-01",
+      "ev-c02-07",
+      "ev-c02-09"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c02-02"
+    ],
+    "required_paths": [
+      [
+        "ev-c02-08",
+        "ev-c02-04",
+        "ev-c02-05",
+        "ev-c02-10",
+        "ev-c02-06"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c02-08"
+    ],
+    "root_label": {
+      "component": "catalog-service",
+      "fault": "an expired database credential"
+    }
+  },
+  "c03": {
+    "accepted_causal_event_ids": [
+      "ev-c03-09",
+      "ev-c03-01",
+      "ev-c03-03",
+      "ev-c03-07",
+      "ev-c03-04",
+      "ev-c03-05"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c03-04",
+      "ev-c03-10",
+      "ev-c03-09",
+      "ev-c03-01",
+      "ev-c03-03",
+      "ev-c03-07",
+      "ev-c03-05"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c03-10",
+      "ev-c03-09",
+      "ev-c03-01",
+      "ev-c03-03",
+      "ev-c03-07",
+      "ev-c03-05"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c03-02",
+      "ev-c03-08",
+      "ev-c03-06"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c03-10"
+    ],
+    "required_paths": [
+      [
+        "ev-c03-09",
+        "ev-c03-01",
+        "ev-c03-03",
+        "ev-c03-07",
+        "ev-c03-04"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c03-09"
+    ],
+    "root_label": {
+      "component": "promotion-service",
+      "fault": "a retry policy with excessive attempts and no deadline"
+    }
+  },
+  "c04": {
+    "accepted_causal_event_ids": [
+      "ev-c04-03",
+      "ev-c04-10",
+      "ev-c04-04",
+      "ev-c04-09",
+      "ev-c04-08",
+      "ev-c04-06"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c04-08",
+      "ev-c04-07",
+      "ev-c04-03",
+      "ev-c04-10",
+      "ev-c04-04",
+      "ev-c04-09",
+      "ev-c04-06"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c04-07",
+      "ev-c04-03",
+      "ev-c04-10",
+      "ev-c04-04",
+      "ev-c04-09",
+      "ev-c04-06"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c04-05",
+      "ev-c04-02",
+      "ev-c04-01"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c04-07"
+    ],
+    "required_paths": [
+      [
+        "ev-c04-03",
+        "ev-c04-10",
+        "ev-c04-04",
+        "ev-c04-09",
+        "ev-c04-08"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c04-03"
+    ],
+    "root_label": {
+      "component": "media-service",
+      "fault": "an invalid per-service DNS resolver override"
+    }
+  },
+  "c05": {
+    "accepted_causal_event_ids": [
+      "ev-c05-05",
+      "ev-c05-08",
+      "ev-c05-07",
+      "ev-c05-06",
+      "ev-c05-04",
+      "ev-c05-01"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c05-04",
+      "ev-c05-02",
+      "ev-c05-05",
+      "ev-c05-08",
+      "ev-c05-07",
+      "ev-c05-06",
+      "ev-c05-01"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c05-02",
+      "ev-c05-05",
+      "ev-c05-08",
+      "ev-c05-07",
+      "ev-c05-06",
+      "ev-c05-01"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c05-03",
+      "ev-c05-10",
+      "ev-c05-09"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c05-02"
+    ],
+    "required_paths": [
+      [
+        "ev-c05-05",
+        "ev-c05-08",
+        "ev-c05-07",
+        "ev-c05-06",
+        "ev-c05-04"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c05-05"
+    ],
+    "root_label": {
+      "component": "certificate-automation",
+      "fault": "a disabled certificate renewal job"
+    }
+  },
+  "c06": {
+    "accepted_causal_event_ids": [
+      "ev-c06-06",
+      "ev-c06-04",
+      "ev-c06-08",
+      "ev-c06-01",
+      "ev-c06-03",
+      "ev-c06-07"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c06-03",
+      "ev-c06-09",
+      "ev-c06-06",
+      "ev-c06-04",
+      "ev-c06-08",
+      "ev-c06-01",
+      "ev-c06-07"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c06-09",
+      "ev-c06-06",
+      "ev-c06-04",
+      "ev-c06-08",
+      "ev-c06-01",
+      "ev-c06-07"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c06-10",
+      "ev-c06-05",
+      "ev-c06-02"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c06-09"
+    ],
+    "required_paths": [
+      [
+        "ev-c06-06",
+        "ev-c06-08",
+        "ev-c06-03"
+      ],
+      [
+        "ev-c06-04",
+        "ev-c06-01",
+        "ev-c06-03"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c06-06",
+      "ev-c06-04"
+    ],
+    "root_label": {
+      "component": "platform-configuration",
+      "fault": "two independent faults: a stale payment endpoint and a missing orders index"
+    }
+  },
+  "c07": {
+    "accepted_causal_event_ids": [
+      "ev-c07-07",
+      "ev-c07-04",
+      "ev-c07-09",
+      "ev-c07-10",
+      "ev-c07-02",
+      "ev-c07-01"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c07-02",
+      "ev-c07-08",
+      "ev-c07-07",
+      "ev-c07-04",
+      "ev-c07-09",
+      "ev-c07-10",
+      "ev-c07-01"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c07-08",
+      "ev-c07-07",
+      "ev-c07-04",
+      "ev-c07-09",
+      "ev-c07-10",
+      "ev-c07-01"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c07-03",
+      "ev-c07-05",
+      "ev-c07-06"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c07-08"
+    ],
+    "required_paths": [
+      [
+        "ev-c07-07",
+        "ev-c07-04",
+        "ev-c07-09",
+        "ev-c07-10",
+        "ev-c07-02"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c07-07"
+    ],
+    "root_label": {
+      "component": "profile-service",
+      "fault": "a database connection leak on canceled requests"
+    }
+  },
+  "c08": {
+    "accepted_causal_event_ids": [
+      "ev-c08-03",
+      "ev-c08-08",
+      "ev-c08-09",
+      "ev-c08-06",
+      "ev-c08-07",
+      "ev-c08-02"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c08-07",
+      "ev-c08-05",
+      "ev-c08-03",
+      "ev-c08-08",
+      "ev-c08-09",
+      "ev-c08-06",
+      "ev-c08-02"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c08-05",
+      "ev-c08-03",
+      "ev-c08-08",
+      "ev-c08-09",
+      "ev-c08-06",
+      "ev-c08-02"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c08-10",
+      "ev-c08-04",
+      "ev-c08-01"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c08-05"
+    ],
+    "required_paths": [
+      [
+        "ev-c08-03",
+        "ev-c08-08",
+        "ev-c08-09",
+        "ev-c08-06",
+        "ev-c08-07"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c08-03"
+    ],
+    "root_label": {
+      "component": "identity-nodes-zone-b",
+      "fault": "host clock skew caused by failed time synchronization"
+    }
+  },
+  "c09": {
+    "accepted_causal_event_ids": [
+      "ev-c09-08",
+      "ev-c09-06",
+      "ev-c09-07",
+      "ev-c09-05",
+      "ev-c09-10",
+      "ev-c09-02"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c09-10",
+      "ev-c09-04",
+      "ev-c09-08",
+      "ev-c09-06",
+      "ev-c09-07",
+      "ev-c09-05",
+      "ev-c09-02"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c09-04",
+      "ev-c09-08",
+      "ev-c09-06",
+      "ev-c09-07",
+      "ev-c09-05",
+      "ev-c09-02"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c09-09",
+      "ev-c09-03",
+      "ev-c09-01"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c09-04"
+    ],
+    "required_paths": [
+      [
+        "ev-c09-08",
+        "ev-c09-06",
+        "ev-c09-07",
+        "ev-c09-05",
+        "ev-c09-10"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c09-08"
+    ],
+    "root_label": {
+      "component": "invoice-consumer",
+      "fault": "an unrecoverable message retried without a dead-letter limit"
+    }
+  },
+  "c10": {
+    "accepted_causal_event_ids": [
+      "ev-c10-06",
+      "ev-c10-02",
+      "ev-c10-01",
+      "ev-c10-08",
+      "ev-c10-04",
+      "ev-c10-05"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c10-04",
+      "ev-c10-07",
+      "ev-c10-06",
+      "ev-c10-02",
+      "ev-c10-01",
+      "ev-c10-08",
+      "ev-c10-05"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c10-07",
+      "ev-c10-06",
+      "ev-c10-02",
+      "ev-c10-01",
+      "ev-c10-08",
+      "ev-c10-05"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c10-09",
+      "ev-c10-10",
+      "ev-c10-03"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c10-07"
+    ],
+    "required_paths": [
+      [
+        "ev-c10-06",
+        "ev-c10-02",
+        "ev-c10-01",
+        "ev-c10-08",
+        "ev-c10-04"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c10-06"
+    ],
+    "root_label": {
+      "component": "session-service",
+      "fault": "synchronized cache expiry without request coalescing"
+    }
+  },
+  "c11": {
+    "accepted_causal_event_ids": [
+      "ev-c11-10",
+      "ev-c11-05",
+      "ev-c11-03",
+      "ev-c11-01",
+      "ev-c11-04",
+      "ev-c11-09"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c11-04",
+      "ev-c11-08",
+      "ev-c11-10",
+      "ev-c11-05",
+      "ev-c11-03",
+      "ev-c11-01",
+      "ev-c11-09"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c11-08",
+      "ev-c11-10",
+      "ev-c11-05",
+      "ev-c11-03",
+      "ev-c11-01",
+      "ev-c11-09"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c11-02",
+      "ev-c11-07",
+      "ev-c11-06"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c11-08"
+    ],
+    "required_paths": [
+      [
+        "ev-c11-10",
+        "ev-c11-05",
+        "ev-c11-03",
+        "ev-c11-01",
+        "ev-c11-04"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c11-10"
+    ],
+    "root_label": {
+      "component": "worker-autoscaler",
+      "fault": "scaling on an averaged CPU metric that excludes queued work"
+    }
+  },
+  "c12": {
+    "accepted_causal_event_ids": [
+      "ev-c12-04",
+      "ev-c12-09",
+      "ev-c12-03",
+      "ev-c12-08",
+      "ev-c12-10",
+      "ev-c12-01"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c12-10",
+      "ev-c12-07",
+      "ev-c12-04",
+      "ev-c12-09",
+      "ev-c12-03",
+      "ev-c12-08",
+      "ev-c12-01"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c12-07",
+      "ev-c12-04",
+      "ev-c12-09",
+      "ev-c12-03",
+      "ev-c12-08",
+      "ev-c12-01"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c12-06",
+      "ev-c12-05",
+      "ev-c12-02"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c12-07"
+    ],
+    "required_paths": [
+      [
+        "ev-c12-04",
+        "ev-c12-09",
+        "ev-c12-03",
+        "ev-c12-08",
+        "ev-c12-10"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c12-04"
+    ],
+    "root_label": {
+      "component": "artifact-store",
+      "fault": "inode exhaustion from abandoned zero-byte temporary files"
+    }
+  },
+  "c13": {
+    "accepted_causal_event_ids": [
+      "ev-c13-03",
+      "ev-c13-04",
+      "ev-c13-07",
+      "ev-c13-06",
+      "ev-c13-09",
+      "ev-c13-08"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c13-09",
+      "ev-c13-01",
+      "ev-c13-03",
+      "ev-c13-04",
+      "ev-c13-07",
+      "ev-c13-06",
+      "ev-c13-08"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c13-01",
+      "ev-c13-03",
+      "ev-c13-04",
+      "ev-c13-07",
+      "ev-c13-06",
+      "ev-c13-08"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c13-02",
+      "ev-c13-05",
+      "ev-c13-10"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c13-01"
+    ],
+    "required_paths": [
+      [
+        "ev-c13-03",
+        "ev-c13-04",
+        "ev-c13-07",
+        "ev-c13-06",
+        "ev-c13-09"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c13-03"
+    ],
+    "root_label": {
+      "component": "report-service",
+      "fault": "opposite lock acquisition order in export and cancellation paths"
+    }
+  },
+  "c14": {
+    "accepted_causal_event_ids": [
+      "ev-c14-05",
+      "ev-c14-08",
+      "ev-c14-09",
+      "ev-c14-10",
+      "ev-c14-04",
+      "ev-c14-06"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c14-04",
+      "ev-c14-02",
+      "ev-c14-05",
+      "ev-c14-08",
+      "ev-c14-09",
+      "ev-c14-10",
+      "ev-c14-06"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c14-02",
+      "ev-c14-05",
+      "ev-c14-08",
+      "ev-c14-09",
+      "ev-c14-10",
+      "ev-c14-06"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c14-07",
+      "ev-c14-03",
+      "ev-c14-01"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c14-02"
+    ],
+    "required_paths": [
+      [
+        "ev-c14-05",
+        "ev-c14-08",
+        "ev-c14-09",
+        "ev-c14-10",
+        "ev-c14-04"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c14-05"
+    ],
+    "root_label": {
+      "component": "api-client",
+      "fault": "ignoring Retry-After and retrying immediately"
+    }
+  },
+  "c15": {
+    "accepted_causal_event_ids": [
+      "ev-c15-05",
+      "ev-c15-07",
+      "ev-c15-09",
+      "ev-c15-08",
+      "ev-c15-01",
+      "ev-c15-02"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c15-01",
+      "ev-c15-03",
+      "ev-c15-05",
+      "ev-c15-07",
+      "ev-c15-09",
+      "ev-c15-08",
+      "ev-c15-02"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c15-03",
+      "ev-c15-05",
+      "ev-c15-07",
+      "ev-c15-09",
+      "ev-c15-08",
+      "ev-c15-02"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c15-10",
+      "ev-c15-04",
+      "ev-c15-06"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c15-03"
+    ],
+    "required_paths": [
+      [
+        "ev-c15-05",
+        "ev-c15-07",
+        "ev-c15-09",
+        "ev-c15-08",
+        "ev-c15-01"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c15-05"
+    ],
+    "root_label": {
+      "component": "search-service",
+      "fault": "a feature flag applying an inverted availability predicate"
+    }
+  },
+  "c16": {
+    "accepted_causal_event_ids": [
+      "ev-c16-04",
+      "ev-c16-06",
+      "ev-c16-10",
+      "ev-c16-03",
+      "ev-c16-09",
+      "ev-c16-07"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c16-09",
+      "ev-c16-02",
+      "ev-c16-04",
+      "ev-c16-06",
+      "ev-c16-10",
+      "ev-c16-03",
+      "ev-c16-07"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c16-02",
+      "ev-c16-04",
+      "ev-c16-06",
+      "ev-c16-10",
+      "ev-c16-03",
+      "ev-c16-07"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c16-01",
+      "ev-c16-05",
+      "ev-c16-08"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c16-02"
+    ],
+    "required_paths": [
+      [
+        "ev-c16-04",
+        "ev-c16-06",
+        "ev-c16-10",
+        "ev-c16-03",
+        "ev-c16-09"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c16-04"
+    ],
+    "root_label": {
+      "component": "event-producer",
+      "fault": "publishing a required field with an incompatible type"
+    }
+  },
+  "c17": {
+    "accepted_causal_event_ids": [
+      "ev-c17-09",
+      "ev-c17-06",
+      "ev-c17-05",
+      "ev-c17-07",
+      "ev-c17-01",
+      "ev-c17-04"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c17-01",
+      "ev-c17-10",
+      "ev-c17-09",
+      "ev-c17-06",
+      "ev-c17-05",
+      "ev-c17-07",
+      "ev-c17-04"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c17-10",
+      "ev-c17-09",
+      "ev-c17-06",
+      "ev-c17-05",
+      "ev-c17-07",
+      "ev-c17-04"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c17-02",
+      "ev-c17-03",
+      "ev-c17-08"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c17-10"
+    ],
+    "required_paths": [
+      [
+        "ev-c17-09",
+        "ev-c17-06",
+        "ev-c17-05",
+        "ev-c17-07",
+        "ev-c17-01"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c17-09"
+    ],
+    "root_label": {
+      "component": "settlement-scheduler",
+      "fault": "scheduling by repeated local wall-clock time without a uniqueness guard"
+    }
+  },
+  "c18": {
+    "accepted_causal_event_ids": [
+      "ev-c18-03",
+      "ev-c18-09",
+      "ev-c18-04",
+      "ev-c18-05",
+      "ev-c18-10",
+      "ev-c18-08"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c18-10",
+      "ev-c18-06",
+      "ev-c18-03",
+      "ev-c18-09",
+      "ev-c18-04",
+      "ev-c18-05",
+      "ev-c18-08"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c18-06",
+      "ev-c18-03",
+      "ev-c18-09",
+      "ev-c18-04",
+      "ev-c18-05",
+      "ev-c18-08"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c18-01",
+      "ev-c18-07",
+      "ev-c18-02"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c18-06"
+    ],
+    "required_paths": [
+      [
+        "ev-c18-03",
+        "ev-c18-09",
+        "ev-c18-04",
+        "ev-c18-05",
+        "ev-c18-10"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c18-03"
+    ],
+    "root_label": {
+      "component": "load-balancer",
+      "fault": "a health check pointed at an authenticated endpoint"
+    }
+  },
+  "c19": {
+    "accepted_causal_event_ids": [
+      "ev-c19-10",
+      "ev-c19-06",
+      "ev-c19-05",
+      "ev-c19-03",
+      "ev-c19-08",
+      "ev-c19-02"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c19-08",
+      "ev-c19-07",
+      "ev-c19-10",
+      "ev-c19-06",
+      "ev-c19-05",
+      "ev-c19-03",
+      "ev-c19-02"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c19-07",
+      "ev-c19-10",
+      "ev-c19-06",
+      "ev-c19-05",
+      "ev-c19-03",
+      "ev-c19-02"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c19-04",
+      "ev-c19-01",
+      "ev-c19-09"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c19-07"
+    ],
+    "required_paths": [
+      [
+        "ev-c19-10",
+        "ev-c19-06",
+        "ev-c19-05",
+        "ev-c19-03",
+        "ev-c19-08"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c19-10"
+    ],
+    "root_label": {
+      "component": "settings-service",
+      "fault": "routing read-after-write requests to a lagging replica"
+    }
+  },
+  "c20": {
+    "accepted_causal_event_ids": [
+      "ev-c20-10",
+      "ev-c20-09",
+      "ev-c20-01",
+      "ev-c20-05",
+      "ev-c20-04",
+      "ev-c20-03"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c20-04",
+      "ev-c20-06",
+      "ev-c20-10",
+      "ev-c20-09",
+      "ev-c20-01",
+      "ev-c20-05",
+      "ev-c20-03"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c20-06",
+      "ev-c20-10",
+      "ev-c20-09",
+      "ev-c20-01",
+      "ev-c20-05",
+      "ev-c20-03"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c20-07",
+      "ev-c20-02",
+      "ev-c20-08"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c20-06"
+    ],
+    "required_paths": [
+      [
+        "ev-c20-10",
+        "ev-c20-09",
+        "ev-c20-01",
+        "ev-c20-05",
+        "ev-c20-04"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c20-10"
+    ],
+    "root_label": {
+      "component": "node-pool-egress",
+      "fault": "NAT source-port exhaustion caused by disabled connection reuse"
+    }
+  },
+  "c21": {
+    "accepted_causal_event_ids": [
+      "ev-c21-07",
+      "ev-c21-10",
+      "ev-c21-04",
+      "ev-c21-01",
+      "ev-c21-02",
+      "ev-c21-06"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c21-02",
+      "ev-c21-05",
+      "ev-c21-07",
+      "ev-c21-10",
+      "ev-c21-04",
+      "ev-c21-01",
+      "ev-c21-06"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c21-05",
+      "ev-c21-07",
+      "ev-c21-10",
+      "ev-c21-04",
+      "ev-c21-01",
+      "ev-c21-06"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c21-03",
+      "ev-c21-09",
+      "ev-c21-08"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c21-05"
+    ],
+    "required_paths": [
+      [
+        "ev-c21-07",
+        "ev-c21-10",
+        "ev-c21-04",
+        "ev-c21-01",
+        "ev-c21-02"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c21-07"
+    ],
+    "root_label": {
+      "component": "log-agent",
+      "fault": "recursive collection of its own error log"
+    }
+  },
+  "c22": {
+    "accepted_causal_event_ids": [
+      "ev-c22-04",
+      "ev-c22-08",
+      "ev-c22-07",
+      "ev-c22-03",
+      "ev-c22-10",
+      "ev-c22-05"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c22-10",
+      "ev-c22-01",
+      "ev-c22-04",
+      "ev-c22-08",
+      "ev-c22-07",
+      "ev-c22-03",
+      "ev-c22-05"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c22-01",
+      "ev-c22-04",
+      "ev-c22-08",
+      "ev-c22-07",
+      "ev-c22-03",
+      "ev-c22-05"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c22-06",
+      "ev-c22-09",
+      "ev-c22-02"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c22-01"
+    ],
+    "required_paths": [
+      [
+        "ev-c22-04",
+        "ev-c22-08",
+        "ev-c22-07",
+        "ev-c22-03",
+        "ev-c22-10"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c22-04"
+    ],
+    "root_label": {
+      "component": "api-service",
+      "fault": "unbounded metric cardinality from a user ID label"
+    }
+  },
+  "c23": {
+    "accepted_causal_event_ids": [
+      "ev-c23-03",
+      "ev-c23-10",
+      "ev-c23-07",
+      "ev-c23-01",
+      "ev-c23-04",
+      "ev-c23-09"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c23-04",
+      "ev-c23-02",
+      "ev-c23-03",
+      "ev-c23-10",
+      "ev-c23-07",
+      "ev-c23-01",
+      "ev-c23-09"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c23-02",
+      "ev-c23-03",
+      "ev-c23-10",
+      "ev-c23-07",
+      "ev-c23-01",
+      "ev-c23-09"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c23-06",
+      "ev-c23-05",
+      "ev-c23-08"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c23-02"
+    ],
+    "required_paths": [
+      [
+        "ev-c23-03",
+        "ev-c23-10",
+        "ev-c23-07",
+        "ev-c23-01",
+        "ev-c23-04"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c23-03"
+    ],
+    "root_label": {
+      "component": "routing-service",
+      "fault": "a circuit breaker shared across primary and fallback destinations"
+    }
+  },
+  "c24": {
+    "accepted_causal_event_ids": [
+      "ev-c24-05",
+      "ev-c24-01",
+      "ev-c24-08",
+      "ev-c24-04",
+      "ev-c24-10",
+      "ev-c24-03"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c24-10",
+      "ev-c24-07",
+      "ev-c24-05",
+      "ev-c24-01",
+      "ev-c24-08",
+      "ev-c24-04",
+      "ev-c24-03"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c24-07",
+      "ev-c24-05",
+      "ev-c24-01",
+      "ev-c24-08",
+      "ev-c24-04",
+      "ev-c24-03"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c24-02",
+      "ev-c24-06",
+      "ev-c24-09"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c24-07"
+    ],
+    "required_paths": [
+      [
+        "ev-c24-05",
+        "ev-c24-01",
+        "ev-c24-08",
+        "ev-c24-04",
+        "ev-c24-10"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c24-05"
+    ],
+    "root_label": {
+      "component": "ledger-consumer",
+      "fault": "applying out-of-order balance events without sequence validation"
+    }
+  },
+  "c25": {
+    "accepted_causal_event_ids": [
+      "ev-c25-05",
+      "ev-c25-08",
+      "ev-c25-03",
+      "ev-c25-04",
+      "ev-c25-07",
+      "ev-c25-10"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c25-07",
+      "ev-c25-02",
+      "ev-c25-05",
+      "ev-c25-08",
+      "ev-c25-03",
+      "ev-c25-04",
+      "ev-c25-10"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c25-02",
+      "ev-c25-05",
+      "ev-c25-08",
+      "ev-c25-03",
+      "ev-c25-04",
+      "ev-c25-10"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c25-09",
+      "ev-c25-01",
+      "ev-c25-06"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c25-02"
+    ],
+    "required_paths": [
+      [
+        "ev-c25-05",
+        "ev-c25-08",
+        "ev-c25-03",
+        "ev-c25-04",
+        "ev-c25-07"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c25-05"
+    ],
+    "root_label": {
+      "component": "key-management",
+      "fault": "deleting the previous encryption key before retention expiry"
+    }
+  },
+  "c26": {
+    "accepted_causal_event_ids": [
+      "ev-c26-01",
+      "ev-c26-09",
+      "ev-c26-08",
+      "ev-c26-06",
+      "ev-c26-02",
+      "ev-c26-07"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c26-02",
+      "ev-c26-05",
+      "ev-c26-01",
+      "ev-c26-09",
+      "ev-c26-08",
+      "ev-c26-06",
+      "ev-c26-07"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c26-05",
+      "ev-c26-01",
+      "ev-c26-09",
+      "ev-c26-08",
+      "ev-c26-06",
+      "ev-c26-07"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c26-03",
+      "ev-c26-04",
+      "ev-c26-10"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c26-05"
+    ],
+    "required_paths": [
+      [
+        "ev-c26-01",
+        "ev-c26-09",
+        "ev-c26-08",
+        "ev-c26-06",
+        "ev-c26-02"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c26-01"
+    ],
+    "root_label": {
+      "component": "cdn-configuration",
+      "fault": "a cache key that omits the session-dependent locale and account variant"
+    }
+  },
+  "c27": {
+    "accepted_causal_event_ids": [
+      "ev-c27-07",
+      "ev-c27-06",
+      "ev-c27-10",
+      "ev-c27-08",
+      "ev-c27-05",
+      "ev-c27-04"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c27-05",
+      "ev-c27-03",
+      "ev-c27-07",
+      "ev-c27-06",
+      "ev-c27-10",
+      "ev-c27-08",
+      "ev-c27-04"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c27-03",
+      "ev-c27-07",
+      "ev-c27-06",
+      "ev-c27-10",
+      "ev-c27-08",
+      "ev-c27-04"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c27-02",
+      "ev-c27-09",
+      "ev-c27-01"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c27-03"
+    ],
+    "required_paths": [
+      [
+        "ev-c27-07",
+        "ev-c27-06",
+        "ev-c27-10",
+        "ev-c27-08",
+        "ev-c27-05"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c27-07"
+    ],
+    "root_label": {
+      "component": "cleanup-leader-election",
+      "fault": "a lease duration shorter than worst-case renewal pauses"
+    }
+  },
+  "c28": {
+    "accepted_causal_event_ids": [
+      "ev-c28-01",
+      "ev-c28-06",
+      "ev-c28-09",
+      "ev-c28-05",
+      "ev-c28-08",
+      "ev-c28-10"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c28-08",
+      "ev-c28-07",
+      "ev-c28-01",
+      "ev-c28-06",
+      "ev-c28-09",
+      "ev-c28-05",
+      "ev-c28-10"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c28-07",
+      "ev-c28-01",
+      "ev-c28-06",
+      "ev-c28-09",
+      "ev-c28-05",
+      "ev-c28-10"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c28-02",
+      "ev-c28-03",
+      "ev-c28-04"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c28-07"
+    ],
+    "required_paths": [
+      [
+        "ev-c28-01",
+        "ev-c28-06",
+        "ev-c28-09",
+        "ev-c28-05",
+        "ev-c28-08"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c28-01"
+    ],
+    "root_label": {
+      "component": "network-tunnel",
+      "fault": "a path MTU mismatch with blocked fragmentation-needed messages"
+    }
+  },
+  "c29": {
+    "accepted_causal_event_ids": [
+      "ev-c29-05",
+      "ev-c29-08",
+      "ev-c29-10",
+      "ev-c29-02",
+      "ev-c29-09",
+      "ev-c29-03"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c29-09",
+      "ev-c29-06",
+      "ev-c29-05",
+      "ev-c29-08",
+      "ev-c29-10",
+      "ev-c29-02",
+      "ev-c29-03"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c29-06",
+      "ev-c29-05",
+      "ev-c29-08",
+      "ev-c29-10",
+      "ev-c29-02",
+      "ev-c29-03"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c29-07",
+      "ev-c29-01",
+      "ev-c29-04"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c29-06"
+    ],
+    "required_paths": [
+      [
+        "ev-c29-05",
+        "ev-c29-08",
+        "ev-c29-10",
+        "ev-c29-02",
+        "ev-c29-09"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c29-05"
+    ],
+    "root_label": {
+      "component": "homepage-service",
+      "fault": "an unbounded synchronous fallback fan-out"
+    }
+  },
+  "c30": {
+    "accepted_causal_event_ids": [
+      "ev-c30-01",
+      "ev-c30-05",
+      "ev-c30-06",
+      "ev-c30-07",
+      "ev-c30-09",
+      "ev-c30-08"
+    ],
+    "accepted_supporting_evidence_ids": [
+      "ev-c30-09",
+      "ev-c30-02",
+      "ev-c30-01",
+      "ev-c30-05",
+      "ev-c30-06",
+      "ev-c30-07",
+      "ev-c30-08"
+    ],
+    "critical_supporting_evidence_ids": [
+      "ev-c30-02",
+      "ev-c30-01",
+      "ev-c30-05",
+      "ev-c30-06",
+      "ev-c30-07",
+      "ev-c30-08"
+    ],
+    "distractor_evidence_ids": [
+      "ev-c30-10",
+      "ev-c30-04",
+      "ev-c30-03"
+    ],
+    "falsifying_evidence_ids": [
+      "ev-c30-02"
+    ],
+    "required_paths": [
+      [
+        "ev-c30-01",
+        "ev-c30-05",
+        "ev-c30-06",
+        "ev-c30-07",
+        "ev-c30-09"
+      ]
+    ],
+    "root_event_ids": [
+      "ev-c30-01"
+    ],
+    "root_label": {
+      "component": "node-cgroup",
+      "fault": "an overly restrictive CPU quota inherited from a node-pool policy"
+    }
+  }
+}
