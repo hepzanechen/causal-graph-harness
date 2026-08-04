@@ -44,7 +44,7 @@ become high-confidence. Full rationale in
 
 ```bash
 pip install -e .
-python scripts/add_fact.py --topic my-topic --statement "..." \
+causal-graph add-fact --topic my-topic --statement "..." \
   --evidence-id <id> --confidence verified
 ```
 
@@ -97,7 +97,7 @@ LLM agent 在调查问题时，往往会很快锁定一个"结论"，然后只�
 
 ```bash
 pip install -e .
-python scripts/add_fact.py --topic my-topic --statement "..." \
+causal-graph add-fact --topic my-topic --statement "..." \
   --evidence-id <id> --confidence verified
 ```
 
