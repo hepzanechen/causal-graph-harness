@@ -392,6 +392,11 @@ deliberately deferred (2026-08-01), in priority order the user chose:
    (`obra/superpowers-marketplace`) ships one manifest per agent alongside
    the same shared content — see that repo for the concrete shape of each
    format. Real ongoing maintenance cost per format added.
+   **Specified (2026-08-05):** see
+   `docs/superpowers/specs/2026-08-05-cross-agent-plugin-manifests-design.md`
+   for the concrete design (Claude/Codex/Cursor manifests + a portable
+   `causal-graph` CLI; OpenCode needs no new manifest, gemini-extension.json
+   left for a later pass).
 2. **Publish for real remote install** (PyPI for `pip install
    causal-graph-harness`, and/or a registered marketplace entry) so use
    doesn't require a local git clone.
