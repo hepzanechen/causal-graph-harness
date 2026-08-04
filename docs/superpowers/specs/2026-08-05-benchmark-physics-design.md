@@ -93,15 +93,25 @@ reason correctly about this physics at all) — not a bare-vs-armed
 comparison, since there is nothing for the harness to add when nothing is
 hidden. Scoring is exact letter-match, no broker involved.
 
+**Open risk, to resolve during implementation, not here:** GPQA is
+distributed gated specifically to prevent its answer key leaking into
+public training/eval corpora. Since this repo may be public, embedding
+verbatim GPQA question text is a contamination/license risk. Before
+authoring `control/`, verify GPQA's current usage terms permit this; if
+not, substitute an equally well-accepted but openly reusable physics QA
+source (e.g. a physics subset of an openly licensed MMLU-style set)
+without changing anything else in this design.
+
 ## Harness (`benchmark.py`, `protocol.json`)
 
 Copy-adapt pioneer's `benchmark.py` and `protocol.json` rather than
 factoring out a shared module — avoids a refactor that isn't otherwise
 motivated yet. Suite id `causal-graph-physics-v1`; same baseline/treatment
 condition shape as pioneer (treatment adds `causal_graph_skill: true` +
-`skill_path`); same limits defaults (`wall_time_seconds: 1200`,
-`search_calls: 12`, `evidence_reads: 12`, `live_web: false`) unless a
-shakedown run shows they don't fit this domain.
+`skill_path`); `runs_per_case_per_condition: 1`; same limits defaults
+(`wall_time_seconds: 1200`, `search_calls: 12`, `evidence_reads: 12`,
+`live_web: false`) unless a shakedown run shows they don't fit this
+domain.
 
 Known limitations inherited as-is from pioneer, not fixed here: exact-string
 matching on root-cause/chain scoring, top-hypothesis-only scoring. Same
