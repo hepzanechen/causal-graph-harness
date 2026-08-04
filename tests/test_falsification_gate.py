@@ -1,25 +1,5 @@
-import subprocess
-import sys
-import shutil
-import pathlib
-
 from causal_graph import storage
-
-SCRIPTS = ("add_evidence.py", "add_fact.py", "propose_causal_edge.py",
-           "update_causal_edge.py", "record_falsification_check.py")
-
-
-def _copy_scripts(tmp_path):
-    (tmp_path / "scripts").mkdir(exist_ok=True)
-    repo_root = pathlib.Path(__file__).resolve().parents[1]
-    for name in SCRIPTS:
-        shutil.copy(repo_root / "scripts" / name, tmp_path / "scripts" / name)
-
-
-def _run(script, args, cwd):
-    return subprocess.run(
-        [sys.executable, f"scripts/{script}", *args], cwd=cwd, capture_output=True, text=True,
-    )
+from tests.cli_support import run_cli as _run
 
 
 def _seed_edge(tmp_path, prior="0.5"):
@@ -35,7 +15,6 @@ def _seed_edge(tmp_path, prior="0.5"):
 
 def test_record_falsification_check_appends_entry(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, _ = _seed_edge(tmp_path)
     result = _run("record_falsification_check.py", [
         "--topic", "t", "--edge-id", edge,
@@ -51,7 +30,6 @@ def test_record_falsification_check_appends_entry(tmp_path, monkeypatch):
 
 def test_falsification_check_unblocks_high_confidence_update(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, ev = _seed_edge(tmp_path, prior="0.5")
 
     # Without a falsification check, a strong update is diverted (Task 11 behavior).
