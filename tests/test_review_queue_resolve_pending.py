@@ -1,27 +1,7 @@
 import json
-import subprocess
-import sys
-import shutil
-import pathlib
 
 from causal_graph import storage
-
-SCRIPTS = ("add_evidence.py", "add_fact.py", "add_deduction.py", "propose_causal_edge.py",
-           "update_causal_edge.py", "review_queue.py", "resolve_pending.py", "revise_fact.py",
-           "record_falsification_check.py", "dispute_edge.py")
-
-
-def _copy_scripts(tmp_path):
-    (tmp_path / "scripts").mkdir(exist_ok=True)
-    repo_root = pathlib.Path(__file__).resolve().parents[1]
-    for name in SCRIPTS:
-        shutil.copy(repo_root / "scripts" / name, tmp_path / "scripts" / name)
-
-
-def _run(script, args, cwd):
-    return subprocess.run(
-        [sys.executable, f"scripts/{script}", *args], cwd=cwd, capture_output=True, text=True,
-    )
+from tests.cli_support import run_cli as _run
 
 
 def _seed_pending_edge_update(tmp_path):
@@ -40,7 +20,6 @@ def _seed_pending_edge_update(tmp_path):
 
 def test_review_queue_lists_pending_with_tier(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     _seed_pending_edge_update(tmp_path)
     result = _run("review_queue.py", ["--topic", "t"], cwd=tmp_path)
     assert result.returncode == 0, result.stderr
@@ -51,7 +30,6 @@ def test_review_queue_lists_pending_with_tier(tmp_path, monkeypatch):
 
 def test_resolve_pending_approve_applies_update(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, _ = _seed_pending_edge_update(tmp_path)
     pending = storage.load_json_list("t", "pending_review")
     item_id = pending[0]["id"]
@@ -67,7 +45,6 @@ def test_resolve_pending_approve_applies_update(tmp_path, monkeypatch):
 
 def test_resolve_pending_reject_discards_without_applying(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, _ = _seed_pending_edge_update(tmp_path)
     item_id = storage.load_json_list("t", "pending_review")[0]["id"]
 
@@ -79,7 +56,6 @@ def test_resolve_pending_reject_discards_without_applying(tmp_path, monkeypatch)
 
 def test_resolve_pending_amend_uses_replacement_ratio(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, _ = _seed_pending_edge_update(tmp_path)
     item_id = storage.load_json_list("t", "pending_review")[0]["id"]
 
@@ -94,7 +70,6 @@ def test_resolve_pending_amend_uses_replacement_ratio(tmp_path, monkeypatch):
 
 def test_resolve_pending_approve_fact_revision_cascades_stale_to_dependents(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     f1 = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "verified"], cwd=tmp_path).stdout.strip()
     f2 = _run("add_fact.py", ["--topic", "t", "--statement", "B", "--evidence-id", ev, "--confidence", "verified"], cwd=tmp_path).stdout.strip()
@@ -134,7 +109,6 @@ def test_resolve_pending_approve_stale_causal_edge_update_after_retry_errors(tmp
     # becomes stale once the retry applies directly. Approving that stale
     # item afterwards must not silently double-apply the same evidence.
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, ev = _seed_pending_edge_update(tmp_path)
     item_id = storage.load_json_list("t", "pending_review")[0]["id"]
 
@@ -157,7 +131,6 @@ def test_resolve_pending_approve_stale_causal_edge_update_after_retry_errors(tmp
 
 def test_resolve_pending_approve_causal_edge_update_rejects_retracted_edge(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, _ = _seed_pending_edge_update(tmp_path)
     item_id = storage.load_json_list("t", "pending_review")[0]["id"]
 
@@ -172,7 +145,6 @@ def test_resolve_pending_approve_causal_edge_update_rejects_retracted_edge(tmp_p
 
 def test_resolve_pending_approve_contradiction_supersedes_old_fact(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     first = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "reported"], cwd=tmp_path).stdout.strip()
     d1 = _run("add_deduction.py", ["--topic", "t", "--claim", "C", "--supports", f"fact:{first}"], cwd=tmp_path).stdout.strip()
@@ -199,7 +171,6 @@ def test_resolve_pending_approve_contradiction_supersedes_old_fact(tmp_path, mon
 
 def test_resolve_pending_reject_contradiction_discards_candidate(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     first = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "reported"], cwd=tmp_path).stdout.strip()
     _run("add_fact.py", [
@@ -223,7 +194,6 @@ def test_resolve_pending_approve_contradiction_rejects_already_superseded_fact(t
     # both approved in sequence: the second approval must not silently
     # re-supersede an already-superseded fact.
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     first = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "reported"], cwd=tmp_path).stdout.strip()
     _run("add_fact.py", ["--topic", "t", "--statement", "not A (v1)", "--evidence-id", ev, "--confidence", "reported", "--contradicts", first], cwd=tmp_path)
@@ -244,7 +214,6 @@ def test_resolve_pending_approve_contradiction_rejects_already_superseded_fact(t
 
 def test_resolve_pending_approve_fact_revision_creates_replacement(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     f1 = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "verified"], cwd=tmp_path).stdout.strip()
 
@@ -272,7 +241,6 @@ def test_resolve_pending_approve_fact_revision_creates_replacement(tmp_path, mon
 
 def test_resolve_pending_amend_rejected_for_fact_revision(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     f1 = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "verified"], cwd=tmp_path).stdout.strip()
 
@@ -289,7 +257,6 @@ def test_resolve_pending_amend_rejected_for_fact_revision(tmp_path, monkeypatch)
 
 def test_resolve_pending_amend_rejects_invalid_likelihood_ratio(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, _ = _seed_pending_edge_update(tmp_path)
     item_id = storage.load_json_list("t", "pending_review")[0]["id"]
 
