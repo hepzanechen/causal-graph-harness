@@ -1,27 +1,6 @@
 # tests/test_update_causal_edge.py
-import subprocess
-import sys
-import shutil
-import pathlib
-
 from causal_graph import storage
-
-
-SCRIPTS = ("add_evidence.py", "add_fact.py", "propose_causal_edge.py", "update_causal_edge.py",
-           "revise_fact.py", "dispute_edge.py")
-
-
-def _copy_scripts(tmp_path):
-    (tmp_path / "scripts").mkdir(exist_ok=True)
-    repo_root = pathlib.Path(__file__).resolve().parents[1]
-    for name in SCRIPTS:
-        shutil.copy(repo_root / "scripts" / name, tmp_path / "scripts" / name)
-
-
-def _run(script, args, cwd):
-    return subprocess.run(
-        [sys.executable, f"scripts/{script}", *args], cwd=cwd, capture_output=True, text=True,
-    )
+from tests.cli_support import run_cli as _run
 
 
 def _seed_edge(tmp_path, prior="0.3"):
@@ -37,7 +16,6 @@ def _seed_edge(tmp_path, prior="0.3"):
 
 def test_update_causal_edge_applies_moderate_update(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, ev = _seed_edge(tmp_path)
     result = _run("update_causal_edge.py", [
         "--topic", "t", "--edge-id", edge, "--evidence-id", ev, "--likelihood-ratio", "2.0",
@@ -51,7 +29,6 @@ def test_update_causal_edge_applies_moderate_update(tmp_path, monkeypatch):
 
 def test_update_causal_edge_diverts_when_crossing_high_confidence_without_falsification(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, ev = _seed_edge(tmp_path, prior="0.5")
     result = _run("update_causal_edge.py", [
         "--topic", "t", "--edge-id", edge, "--evidence-id", ev, "--likelihood-ratio", "50.0",
@@ -67,7 +44,6 @@ def test_update_causal_edge_diverts_when_crossing_high_confidence_without_falsif
 
 def test_update_causal_edge_diverts_on_reversal(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, ev = _seed_edge(tmp_path, prior="0.3")
 
     # Establish an upward trend: prior 0.3 -> posterior ~0.865, well short of the
@@ -102,7 +78,6 @@ def test_update_causal_edge_diverts_on_reversal(tmp_path, monkeypatch):
 
 def test_update_causal_edge_applies_when_falsification_check_already_recorded(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, ev = _seed_edge(tmp_path, prior="0.5")
 
     # Seed a falsification check directly on the edge record (Task 12's
@@ -127,7 +102,6 @@ def test_update_causal_edge_applies_when_falsification_check_already_recorded(tm
 
 def test_update_causal_edge_rejects_duplicate_evidence(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, ev = _seed_edge(tmp_path)
     first = _run("update_causal_edge.py", [
         "--topic", "t", "--edge-id", edge, "--evidence-id", ev, "--likelihood-ratio", "2.0",
@@ -143,7 +117,6 @@ def test_update_causal_edge_rejects_duplicate_evidence(tmp_path, monkeypatch):
 
 def test_update_causal_edge_rejects_unknown_correlated_with(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, ev = _seed_edge(tmp_path)
     result = _run("update_causal_edge.py", [
         "--topic", "t", "--edge-id", edge, "--evidence-id", ev, "--likelihood-ratio", "2.0",
@@ -155,7 +128,6 @@ def test_update_causal_edge_rejects_unknown_correlated_with(tmp_path, monkeypatc
 
 def test_update_causal_edge_rejects_retracted_edge(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, ev = _seed_edge(tmp_path)
     _run("dispute_edge.py", ["--topic", "t", "--edge-id", edge, "--new-status", "retracted", "--reason", "wrong"], cwd=tmp_path)
 
@@ -168,7 +140,6 @@ def test_update_causal_edge_rejects_retracted_edge(tmp_path, monkeypatch):
 
 def test_update_causal_edge_reaffirms_stale_edge_on_successful_apply(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     edge, ev = _seed_edge(tmp_path)
     ev2 = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c2", "--source-ref", "r2"], cwd=tmp_path).stdout.strip()
 
