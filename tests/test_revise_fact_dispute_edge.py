@@ -1,30 +1,9 @@
-import subprocess
-import sys
-import shutil
-import pathlib
-
 from causal_graph import storage
-
-SCRIPTS = ("add_evidence.py", "add_fact.py", "add_deduction.py",
-           "propose_causal_edge.py", "revise_fact.py", "dispute_edge.py")
-
-
-def _copy_scripts(tmp_path):
-    (tmp_path / "scripts").mkdir(exist_ok=True)
-    repo_root = pathlib.Path(__file__).resolve().parents[1]
-    for name in SCRIPTS:
-        shutil.copy(repo_root / "scripts" / name, tmp_path / "scripts" / name)
-
-
-def _run(script, args, cwd):
-    return subprocess.run(
-        [sys.executable, f"scripts/{script}", *args], cwd=cwd, capture_output=True, text=True,
-    )
+from tests.cli_support import run_cli as _run
 
 
 def test_retracting_root_fact_cascades_stale_to_dependents(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     f1 = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "reported"], cwd=tmp_path).stdout.strip()
     f2 = _run("add_fact.py", ["--topic", "t", "--statement", "B", "--evidence-id", ev, "--confidence", "reported"], cwd=tmp_path).stdout.strip()
@@ -50,7 +29,6 @@ def test_retracting_root_fact_cascades_stale_to_dependents(tmp_path, monkeypatch
 def test_agent_revising_verified_fact_is_queued_not_applied(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("CAUSAL_GRAPH_AGENT_ID", "agent-1")
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     f1 = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "verified"], cwd=tmp_path).stdout.strip()
 
@@ -67,7 +45,6 @@ def test_agent_revising_verified_fact_is_queued_not_applied(tmp_path, monkeypatc
 
 def test_revise_fact_replacement_statement_requires_superseded_status(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     f1 = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "reported"], cwd=tmp_path).stdout.strip()
 
@@ -81,7 +58,6 @@ def test_revise_fact_replacement_statement_requires_superseded_status(tmp_path, 
 
 def test_dispute_edge_updates_status(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     f1 = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "verified"], cwd=tmp_path).stdout.strip()
     f2 = _run("add_fact.py", ["--topic", "t", "--statement", "B", "--evidence-id", ev, "--confidence", "verified"], cwd=tmp_path).stdout.strip()
