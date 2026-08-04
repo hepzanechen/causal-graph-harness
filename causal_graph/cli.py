@@ -2,7 +2,10 @@ import argparse
 import sys
 
 from .agent import current_agent_id  # noqa: F401 (re-exported for tests/test_sanity.py)
-from .commands import add_evidence, add_fact, add_deduction, propose_causal_edge
+from .commands import (
+    add_evidence, add_fact, add_deduction, propose_causal_edge,
+    update_causal_edge, record_falsification_check, revise_fact, dispute_edge,
+)
 from .schema import ValidationError
 
 _COMMANDS = {
@@ -10,6 +13,10 @@ _COMMANDS = {
     "add-fact": add_fact,
     "add-deduction": add_deduction,
     "propose-causal-edge": propose_causal_edge,
+    "update-causal-edge": update_causal_edge,
+    "record-falsification-check": record_falsification_check,
+    "revise-fact": revise_fact,
+    "dispute-edge": dispute_edge,
 }
 
 
