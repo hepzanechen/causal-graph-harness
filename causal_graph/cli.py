@@ -5,6 +5,7 @@ from .agent import current_agent_id  # noqa: F401 (re-exported for tests/test_sa
 from .commands import (
     add_evidence, add_fact, add_deduction, propose_causal_edge,
     update_causal_edge, record_falsification_check, revise_fact, dispute_edge,
+    review_queue, resolve_pending,
 )
 from .schema import ValidationError
 
@@ -17,6 +18,8 @@ _COMMANDS = {
     "record-falsification-check": record_falsification_check,
     "revise-fact": revise_fact,
     "dispute-edge": dispute_edge,
+    "review-queue": review_queue,
+    "resolve-pending": resolve_pending,
 }
 
 
