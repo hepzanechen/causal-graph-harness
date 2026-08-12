@@ -1,0 +1,28 @@
+{
+  "name": "causal-graph-harness",
+  "owner": {
+    "name": "Zane",
+    "url": "https://github.com/hepzanechen"
+  },
+  "description": "Self-hosted marketplace for the causal-graph-harness plugin.",
+  "plugins": [
+    {
+      "name": "causal-graph-harness",
+      "source": "./",
+      "description": "Auditable fact/deduction graph plus a Bayesian-updated causal graph for structuring an agent's research investigation, so it doesn't lock onto an early verdict and only seek confirming evidence.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Zane"
+      },
+      "homepage": "https://github.com/hepzanechen/causal-graph-harness",
+      "license": "MIT",
+      "keywords": [
+        "research",
+        "causal-graph",
+        "bayesian",
+        "falsification",
+        "agent-harness"
+      ]
+    }
+  ]
+}

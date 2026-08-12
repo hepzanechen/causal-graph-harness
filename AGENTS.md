@@ -4,11 +4,14 @@ This file is the entrance point for **any** coding agent (not just Claude
 Code) that finds itself in this repository. It is plain markdown and plain
 CLI — no agent SDK, no vendor-specific framework required to use it.
 
-**Status:** this is the only distribution mechanism right now (requires a
-local git clone + `pip install -e .`). Per-agent plugin manifests and a
-real package publish are scoped but intentionally deferred until the
-skill/process itself is validated through real use — see "Future work:
-cross-agent distribution" in the design spec.
+**Status:** a local git clone + `pip install -e .` remains the only way to
+get the CLI on `PATH`. Per-agent plugin manifests now exist
+(`.claude-plugin/`, `.cursor-plugin/`, `.codex-plugin/`) so Claude Code and
+Cursor can install this repo as a plugin directly from GitHub — see
+"Install as a plugin" in [`README.md`](README.md). A real package publish
+(PyPI) is still deferred until the skill/process itself is validated
+through real use — see "Future work: cross-agent distribution" in the
+design spec.
 
 ## What this is
 
@@ -61,6 +64,55 @@ This directory is created on first use; no separate server or daemon.
 
 Steps 2 and 5–7 are conditional — skip what a simple question doesn't
 need.
+
+### Meta-thinking checkpoints
+
+For a non-trivial investigation, use these checkpoints around the graph
+workflow. They guide what to investigate; they are not additional mandatory
+graph layers. Apply them proportionally, and skip them when one or two grounded
+facts answer the question.
+
+1. **Frame the contrast and boundary.** State the exact symptom, expected
+   outcome, and closest healthy comparison: "Why did A happen rather than B?"
+   Declare the system boundary within which "root cause" will be used. Keep the
+   upstream explanatory cause distinct from the most effective place to
+   intervene and prevent recurrence; they may not be the same node.
+2. **Localize backward, explain forward.** Treat the earliest *observed*
+   divergence as a candidate causal frontier, not automatically as the root
+   cause. Trace it backward through dependency/provenance links, then reconstruct
+   the proposed mechanism forward from each candidate to the symptom. Do not
+   silently equate observation time with event time.
+3. **Classify causal roles.** Where useful, label candidates as trigger,
+   necessary precondition, enabling condition, propagator, amplifier, detection
+   point, symptom, or recovery failure. A highly visible propagation or
+   detection point is not necessarily an initiating cause.
+4. **Maintain genuinely competing and joint hypotheses.** Search across input,
+   code, configuration, persisted state, dependency/environment, timing/order,
+   common-cause, and multi-factor explanations. Hypotheses need not be mutually
+   exclusive: represent a conjunction of individually insufficient conditions
+   as a deduction supported by those conditions.
+5. **Choose discriminating tests.** Prefer the affordable next observation or
+   experiment whose possible results would most change the ranking of leading
+   hypotheses. Before running it, record what each material outcome would
+   support and weaken. Useful techniques include healthy/failing contrasts,
+   temporal bracketing, provenance/backward slicing, replay, substitution,
+   ablation, perturbation, and delta debugging.
+6. **Validate causally, not only chronologically.** Ask whether the failure
+   would still occur if the candidate were changed while relevant context stayed
+   fixed. When safe and feasible, test this with replay or intervention. Use
+   negative controls and variation across runs/environments to check that the
+   proposed relationship is stable and not merely correlated.
+7. **Audit observability and search coverage.** Ask which upstream states,
+   timestamps, transformations, or source classes were unavailable or never
+   examined. Report confidence *given the examined evidence* separately from
+   how complete the evidence search was; a high posterior cannot compensate for
+   a one-sided search.
+8. **Use an explicit stopping rule.** Conclude when the contrast and boundary
+   are clear, the mechanism works backward and forward, serious alternatives
+   and joint causes have been considered, causal validation is proportionate to
+   the stakes, and remaining blind spots are stated. Report the causal chain and
+   prevention point instead of forcing a single root cause when the evidence
+   supports several contributing conditions.
 
 1. **Define the research question.** Pick the topic slug.
 2. **Elicit human input (optional, skippable).** If a human gives you

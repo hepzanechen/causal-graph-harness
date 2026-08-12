@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Causal Graph Harness logo">
+  <rect width="64" height="64" rx="12" fill="#1f2430"/>
+  <line x1="18" y1="46" x2="32" y2="20" stroke="#7dd3fc" stroke-width="2.5"/>
+  <line x1="32" y1="20" x2="47" y2="34" stroke="#7dd3fc" stroke-width="2.5"/>
+  <line x1="18" y1="46" x2="47" y2="34" stroke="#3a4257" stroke-width="2.5" stroke-dasharray="3 3"/>
+  <circle cx="18" cy="46" r="5.5" fill="#f4f6fb"/>
+  <circle cx="32" cy="20" r="5.5" fill="#facc15"/>
+  <circle cx="47" cy="34" r="5.5" fill="#4ade80"/>
+</svg>

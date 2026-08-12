@@ -9,6 +9,7 @@
   "homepage": "https://github.com/hepzanechen/causal-graph-harness",
   "repository": "https://github.com/hepzanechen/causal-graph-harness",
   "license": "MIT",
+  "logo": "./logo.svg",
   "keywords": [
     "research",
     "causal-graph",
