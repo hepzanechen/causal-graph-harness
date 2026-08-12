@@ -1,21 +1,19 @@
-#!/usr/bin/env python3
-import argparse
-import sys
 import time
+
 from causal_graph import bayes, lifecycle, storage
-from causal_graph.cli import current_agent_id
+from causal_graph.agent import current_agent_id
 from causal_graph.lock import topic_lock
 from causal_graph.schema import ValidationError, new_id, validate_likelihood_ratio
 
 
-def main():
-    p = argparse.ArgumentParser()
+def add_arguments(p):
     p.add_argument("--topic", required=True)
     p.add_argument("--id", required=True, dest="item_id")
     p.add_argument("--action", required=True, choices=["approve", "reject", "amend"])
     p.add_argument("--amended-likelihood-ratio", type=float, default=None, dest="amended_likelihood_ratio")
-    args = p.parse_args()
 
+
+def run(args):
     with topic_lock(args.topic):
         storage.prepare(args.topic)
         items = storage.load_json_list(args.topic, "pending_review")
@@ -90,14 +88,6 @@ def main():
                 writes += lifecycle.propagate_stale(args.topic, f"fact:{old_fact['id']}")
 
         storage.commit_mutation(
-            args.topic, current_agent_id(), "resolve_pending.py", vars(args), writes,
+            args.topic, current_agent_id(), "resolve-pending", vars(args), writes,
         )
     print(f"resolved {args.item_id}: {args.action}")
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except ValidationError as e:
-        print(f"error: {e}", file=sys.stderr)
-        sys.exit(1)

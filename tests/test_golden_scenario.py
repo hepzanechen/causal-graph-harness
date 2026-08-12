@@ -1,35 +1,15 @@
-import subprocess
-import sys
-import shutil
-import pathlib
-
 from causal_graph import storage
-
-ALL_SCRIPTS = (
-    "add_evidence.py", "add_fact.py", "add_deduction.py", "propose_causal_edge.py",
-    "update_causal_edge.py", "record_falsification_check.py",
-    "revise_fact.py", "dispute_edge.py", "review_queue.py", "resolve_pending.py",
-)
-
-
-def _copy_scripts(tmp_path):
-    (tmp_path / "scripts").mkdir(exist_ok=True)
-    repo_root = pathlib.Path(__file__).resolve().parents[1]
-    for name in ALL_SCRIPTS:
-        shutil.copy(repo_root / "scripts" / name, tmp_path / "scripts" / name)
+from tests.cli_support import run_cli as _run_raw
 
 
 def _run(script, args, cwd):
-    result = subprocess.run(
-        [sys.executable, f"scripts/{script}", *args], cwd=cwd, capture_output=True, text=True,
-    )
+    result = _run_raw(script, args, cwd)
     assert result.returncode == 0, f"{script} {args} failed: {result.stderr}"
     return result.stdout.strip()
 
 
 def test_golden_scenario_two_facts_one_deduction_one_edge_two_updates(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
 
     ev1 = _run("add_evidence.py", [
         "--topic", "etl", "--adapter", "internal_db",

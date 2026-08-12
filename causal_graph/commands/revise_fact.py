@@ -1,23 +1,21 @@
-#!/usr/bin/env python3
-import argparse
-import sys
 import time
+
 from causal_graph import lifecycle, storage
-from causal_graph.cli import current_agent_id
+from causal_graph.agent import current_agent_id
 from causal_graph.lock import topic_lock
 from causal_graph.schema import ValidationError, new_id
 
 
-def main():
-    p = argparse.ArgumentParser()
+def add_arguments(p):
     p.add_argument("--topic", required=True)
     p.add_argument("--fact-id", required=True, dest="fact_id")
     p.add_argument("--new-status", required=True, dest="new_status",
-                    choices=["contested", "superseded", "retracted"])
+                   choices=["contested", "superseded", "retracted"])
     p.add_argument("--reason", required=True)
     p.add_argument("--replacement-statement", default=None, dest="replacement_statement")
-    args = p.parse_args()
 
+
+def run(args):
     if args.replacement_statement and args.new_status != "superseded":
         raise ValidationError("--replacement-statement requires --new-status superseded")
 
@@ -41,7 +39,7 @@ def main():
                 "created_at": time.time(),
             }
             storage.commit_mutation(
-                args.topic, agent_id, "revise_fact.py", vars(args),
+                args.topic, agent_id, "revise-fact", vars(args),
                 [("pending_review", item)],
             )
             print(f"queued for review: {item['id']} (agent attempted to revise a human-verified fact)")
@@ -62,14 +60,6 @@ def main():
             writes.append(("facts", new_fact))
 
         storage.commit_mutation(
-            args.topic, agent_id, "revise_fact.py", vars(args), writes,
+            args.topic, agent_id, "revise-fact", vars(args), writes,
         )
         print(fact["id"])
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except ValidationError as e:
-        print(f"error: {e}", file=sys.stderr)
-        sys.exit(1)

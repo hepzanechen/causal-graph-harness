@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-import argparse
-import sys
 import time
+
 from causal_graph import bayes, review, storage
-from causal_graph.cli import current_agent_id
+from causal_graph.agent import current_agent_id
 from causal_graph.lock import topic_lock
 from causal_graph.schema import ValidationError, new_id, validate_likelihood_ratio
 
@@ -16,15 +14,15 @@ def _needs_review(edge: dict, new_posterior: float):
     return False, None
 
 
-def main():
-    p = argparse.ArgumentParser()
+def add_arguments(p):
     p.add_argument("--topic", required=True)
     p.add_argument("--edge-id", required=True, dest="edge_id")
     p.add_argument("--evidence-id", required=True, dest="evidence_id")
     p.add_argument("--likelihood-ratio", required=True, type=float, dest="likelihood_ratio")
     p.add_argument("--correlated-with", default="", dest="correlated_with")
-    args = p.parse_args()
 
+
+def run(args):
     correlated_with = [c.strip() for c in args.correlated_with.split(",") if c.strip()]
     lr = validate_likelihood_ratio(args.likelihood_ratio)
 
@@ -76,7 +74,7 @@ def main():
                 "created_at": time.time(),
             }
             storage.commit_mutation(
-                args.topic, current_agent_id(), "update_causal_edge.py", vars(args),
+                args.topic, current_agent_id(), "update-causal-edge", vars(args),
                 [("pending_review", item)],
             )
             print(f"queued for review: {item['id']} ({reason})")
@@ -91,15 +89,7 @@ def main():
             edge["status"] = "active"
         edge["last_updated"] = time.time()
         storage.commit_mutation(
-            args.topic, current_agent_id(), "update_causal_edge.py", vars(args),
+            args.topic, current_agent_id(), "update-causal-edge", vars(args),
             [("causal_edges", edge)],
         )
         print(edge["id"])
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except ValidationError as e:
-        print(f"error: {e}", file=sys.stderr)
-        sys.exit(1)

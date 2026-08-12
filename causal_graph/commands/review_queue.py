@@ -1,7 +1,5 @@
-#!/usr/bin/env python3
-import argparse
 import json
-import sys
+
 from causal_graph import graph as graphmod
 from causal_graph import storage
 from causal_graph.lock import topic_lock
@@ -17,11 +15,11 @@ def _base_ref_for(item: dict, topic: str):
     return None
 
 
-def main():
-    p = argparse.ArgumentParser()
+def add_arguments(p):
     p.add_argument("--topic", required=True)
-    args = p.parse_args()
 
+
+def run(args):
     with topic_lock(args.topic):
         storage.prepare(args.topic)
         items = storage.load_json_list(args.topic, "pending_review")
@@ -29,7 +27,3 @@ def main():
             ref = _base_ref_for(item, args.topic)
             item["tier"] = graphmod.urgency_tier(args.topic, ref) if ref else "normal"
     print(json.dumps(items, indent=2))
-
-
-if __name__ == "__main__":
-    main()

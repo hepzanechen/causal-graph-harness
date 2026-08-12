@@ -1,23 +1,5 @@
-import subprocess
-import sys
-import shutil
-import pathlib
-
 from causal_graph import storage
-
-
-def _copy_scripts(tmp_path):
-    (tmp_path / "scripts").mkdir(exist_ok=True)
-    repo_root = pathlib.Path(__file__).resolve().parents[1]
-    for name in ("add_evidence.py", "add_fact.py", "add_deduction.py",
-                 "propose_causal_edge.py", "revise_fact.py"):
-        shutil.copy(repo_root / "scripts" / name, tmp_path / "scripts" / name)
-
-
-def _run(script, args, cwd):
-    return subprocess.run(
-        [sys.executable, f"scripts/{script}", *args], cwd=cwd, capture_output=True, text=True,
-    )
+from tests.cli_support import run_cli as _run
 
 
 def _seed_fact(tmp_path, statement):
@@ -27,7 +9,6 @@ def _seed_fact(tmp_path, statement):
 
 def test_propose_causal_edge_rejects_unknown_node(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     f1 = _seed_fact(tmp_path, "A")
     result = _run("propose_causal_edge.py", [
         "--topic", "t", "--from", f"fact:{f1}", "--to", "fact:missing",
@@ -39,7 +20,6 @@ def test_propose_causal_edge_rejects_unknown_node(tmp_path, monkeypatch):
 
 def test_propose_causal_edge_writes_record(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     f1 = _seed_fact(tmp_path, "memory limit cut")
     f2 = _seed_fact(tmp_path, "job OOM-killed")
 
@@ -59,7 +39,6 @@ def test_propose_causal_edge_writes_record(tmp_path, monkeypatch):
 
 def test_propose_causal_edge_rejects_inactive_node(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     f1 = _seed_fact(tmp_path, "A")
     f2 = _seed_fact(tmp_path, "B")
     monkeypatch.setenv("CAUSAL_GRAPH_AGENT_ID", "human")

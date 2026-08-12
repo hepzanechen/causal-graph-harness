@@ -1,21 +1,19 @@
-#!/usr/bin/env python3
-import argparse
-import sys
 import time
+
 from causal_graph import storage
-from causal_graph.cli import current_agent_id
+from causal_graph.agent import current_agent_id
 from causal_graph.lock import topic_lock
 from causal_graph.schema import ValidationError, new_id, parse_node_ref
 
 
-def main():
-    p = argparse.ArgumentParser()
+def add_arguments(p):
     p.add_argument("--topic", required=True)
     p.add_argument("--claim", required=True)
     p.add_argument("--supports", required=True, help="comma-separated fact:ID/deduction:ID refs")
     p.add_argument("--logic-note", default="", dest="logic_note")
-    args = p.parse_args()
 
+
+def run(args):
     refs = [r.strip() for r in args.supports.split(",") if r.strip()]
     if not refs:
         raise ValidationError("--supports must reference at least one fact or deduction")
@@ -49,15 +47,7 @@ def main():
             "created_by": current_agent_id(),
         }
         storage.commit_mutation(
-            args.topic, current_agent_id(), "add_deduction.py", vars(args),
+            args.topic, current_agent_id(), "add-deduction", vars(args),
             [("deductions", record)],
         )
     print(record["id"])
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except ValidationError as e:
-        print(f"error: {e}", file=sys.stderr)
-        sys.exit(1)

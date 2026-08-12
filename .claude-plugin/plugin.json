@@ -1,0 +1,18 @@
+{
+  "name": "causal-graph-harness",
+  "description": "Auditable fact/deduction graph plus a Bayesian-updated causal graph for structuring an agent's research investigation, so it doesn't lock onto an early verdict and only seek confirming evidence.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Zane"
+  },
+  "homepage": "https://github.com/hepzanechen/causal-graph-harness",
+  "repository": "https://github.com/hepzanechen/causal-graph-harness",
+  "license": "MIT",
+  "keywords": [
+    "research",
+    "causal-graph",
+    "bayesian",
+    "falsification",
+    "agent-harness"
+  ]
+}

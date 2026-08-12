@@ -44,7 +44,7 @@ become high-confidence. Full rationale in
 
 ```bash
 pip install -e .
-python scripts/add_fact.py --topic my-topic --statement "..." \
+causal-graph add-fact --topic my-topic --statement "..." \
   --evidence-id <id> --confidence verified
 ```
 
@@ -52,6 +52,30 @@ That's a complete, legitimate use on its own. For the full process — evidence
 adapters, proposing deductions and causal edges, Bayesian updates, the
 falsification-gate retry pattern, and the review queue — read
 [`AGENTS.md`](AGENTS.md).
+
+### Install as a plugin
+
+This repo doubles as its own plugin marketplace, so an agent can install it
+directly from GitHub instead of cloning it manually:
+
+**Claude Code**
+
+```
+/plugin marketplace add hepzanechen/causal-graph-harness
+/plugin install causal-graph-harness@causal-graph-harness
+```
+
+**Cursor**
+
+Add `hepzanechen/causal-graph-harness` from Customize → Plugins, or via
+[cursor.com/marketplace](https://cursor.com/marketplace) once the listing
+is approved (submission pending).
+
+**Codex**
+
+No self-serve plugin marketplace exists for Codex CLI yet. A
+`.codex-plugin/plugin.json` manifest is included so it's ready the moment
+one ships; until then, use the git-clone install above.
 
 ### Status
 
@@ -97,12 +121,34 @@ LLM agent 在调查问题时，往往会很快锁定一个"结论"，然后只�
 
 ```bash
 pip install -e .
-python scripts/add_fact.py --topic my-topic --statement "..." \
+causal-graph add-fact --topic my-topic --statement "..." \
   --evidence-id <id> --confidence verified
 ```
 
 这样就是一次完整、合法的最小用法。完整流程——证据适配器、提出 deduction 和 causal edge、
 贝叶斯更新、证伪门禁的重试模式、以及 review queue——请读 [`AGENTS.md`](AGENTS.md)。
+
+### 作为插件安装
+
+这个仓库本身就是一个插件市场，agent 可以直接从 GitHub 安装，不用手动 clone：
+
+**Claude Code**
+
+```
+/plugin marketplace add hepzanechen/causal-graph-harness
+/plugin install causal-graph-harness@causal-graph-harness
+```
+
+**Cursor**
+
+在 Customize → Plugins 里添加 `hepzanechen/causal-graph-harness`，或等
+[cursor.com/marketplace](https://cursor.com/marketplace) 审核通过后直接安装
+（提交审核中）。
+
+**Codex**
+
+Codex CLI 目前还没有自助式插件市场。仓库里已经放了 `.codex-plugin/plugin.json`
+清单，市场上线后可以直接用；在此之前请用上面的 git clone 方式安装。
 
 ### 现状
 

@@ -1,22 +1,20 @@
-#!/usr/bin/env python3
-import argparse
-import sys
 import time
+
 from causal_graph import storage
-from causal_graph.cli import current_agent_id
+from causal_graph.agent import current_agent_id
 from causal_graph.lock import topic_lock
 from causal_graph.schema import Confidence, ValidationError, new_id
 
 
-def main():
-    p = argparse.ArgumentParser()
+def add_arguments(p):
     p.add_argument("--topic", required=True)
     p.add_argument("--statement", required=True)
     p.add_argument("--evidence-id", action="append", required=True, dest="evidence_ids")
     p.add_argument("--confidence", required=True, choices=[c.value for c in Confidence])
     p.add_argument("--contradicts", default=None, help="ID of an existing fact this contradicts")
-    args = p.parse_args()
 
+
+def run(args):
     with topic_lock(args.topic):
         storage.prepare(args.topic)
         known_evidence = {e["id"] for e in storage.load_json_list(args.topic, "evidence")}
@@ -49,21 +47,13 @@ def main():
                 "created_at": time.time(),
             }
             storage.commit_mutation(
-                args.topic, current_agent_id(), "add_fact.py", vars(args),
+                args.topic, current_agent_id(), "add-fact", vars(args),
                 [("pending_review", item)],
             )
             print(f"queued for review: {item['id']} (candidate fact {candidate['id']} contradicts {args.contradicts})")
             return
 
         storage.commit_mutation(
-            args.topic, current_agent_id(), "add_fact.py", vars(args), [("facts", candidate)],
+            args.topic, current_agent_id(), "add-fact", vars(args), [("facts", candidate)],
         )
     print(candidate["id"])
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except ValidationError as e:
-        print(f"error: {e}", file=sys.stderr)
-        sys.exit(1)

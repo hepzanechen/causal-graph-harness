@@ -1,27 +1,9 @@
-import subprocess
-import sys
-import shutil
-import pathlib
-
 from causal_graph import storage
-
-
-def _copy_scripts(tmp_path):
-    (tmp_path / "scripts").mkdir(exist_ok=True)
-    repo_root = pathlib.Path(__file__).resolve().parents[1]
-    for name in ("add_evidence.py", "add_fact.py", "add_deduction.py", "revise_fact.py"):
-        shutil.copy(repo_root / "scripts" / name, tmp_path / "scripts" / name)
-
-
-def _run(script, args, cwd):
-    return subprocess.run(
-        [sys.executable, f"scripts/{script}", *args], cwd=cwd, capture_output=True, text=True,
-    )
+from tests.cli_support import run_cli as _run
 
 
 def test_add_deduction_rejects_unknown_support(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     result = _run("add_deduction.py", [
         "--topic", "t", "--claim", "x", "--supports", "fact:missing",
     ], cwd=tmp_path)
@@ -31,7 +13,6 @@ def test_add_deduction_rejects_unknown_support(tmp_path, monkeypatch):
 
 def test_add_deduction_writes_record(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     f1 = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "verified"], cwd=tmp_path).stdout.strip()
     f2 = _run("add_fact.py", ["--topic", "t", "--statement", "B", "--evidence-id", ev, "--confidence", "verified"], cwd=tmp_path).stdout.strip()
@@ -50,7 +31,6 @@ def test_add_deduction_writes_record(tmp_path, monkeypatch):
 
 def test_add_deduction_rejects_empty_supports(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     result = _run("add_deduction.py", [
         "--topic", "t", "--claim", "x", "--supports", "",
     ], cwd=tmp_path)
@@ -60,7 +40,6 @@ def test_add_deduction_rejects_empty_supports(tmp_path, monkeypatch):
 
 def test_add_deduction_rejects_inactive_supporting_fact(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _copy_scripts(tmp_path)
     ev = _run("add_evidence.py", ["--topic", "t", "--adapter", "human", "--content", "c", "--source-ref", "r"], cwd=tmp_path).stdout.strip()
     f1 = _run("add_fact.py", ["--topic", "t", "--statement", "A", "--evidence-id", ev, "--confidence", "reported"], cwd=tmp_path).stdout.strip()
     _run("revise_fact.py", ["--topic", "t", "--fact-id", f1, "--new-status", "retracted", "--reason", "wrong"], cwd=tmp_path)
