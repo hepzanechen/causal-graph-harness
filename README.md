@@ -73,9 +73,10 @@ is approved (submission pending).
 
 **Codex**
 
-No self-serve plugin marketplace exists for Codex CLI yet. A
-`.codex-plugin/plugin.json` manifest is included so it's ready the moment
-one ships; until then, use the git-clone install above.
+```
+codex plugin marketplace add hepzanechen/causal-graph-harness
+codex plugin add causal-graph-harness@causal-graph-harness
+```
 
 ### Status
 
@@ -147,8 +148,10 @@ causal-graph add-fact --topic my-topic --statement "..." \
 
 **Codex**
 
-Codex CLI 目前还没有自助式插件市场。仓库里已经放了 `.codex-plugin/plugin.json`
-清单，市场上线后可以直接用；在此之前请用上面的 git clone 方式安装。
+```
+codex plugin marketplace add hepzanechen/causal-graph-harness
+codex plugin add causal-graph-harness@causal-graph-harness
+```
 
 ### 现状
 

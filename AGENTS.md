@@ -6,9 +6,10 @@ CLI — no agent SDK, no vendor-specific framework required to use it.
 
 **Status:** a local git clone + `pip install -e .` remains the only way to
 get the CLI on `PATH`. Per-agent plugin manifests now exist
-(`.claude-plugin/`, `.cursor-plugin/`, `.codex-plugin/`) so Claude Code and
-Cursor can install this repo as a plugin directly from GitHub — see
-"Install as a plugin" in [`README.md`](README.md). A real package publish
+(`.claude-plugin/`, `.cursor-plugin/`, `.codex-plugin/`) so Claude Code,
+Cursor, and Codex CLI can all install this repo as a plugin directly from
+GitHub — see "Install as a plugin" in [`README.md`](README.md). A real
+package publish
 (PyPI) is still deferred until the skill/process itself is validated
 through real use — see "Future work: cross-agent distribution" in the
 design spec.
