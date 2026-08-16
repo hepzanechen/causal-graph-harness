@@ -78,6 +78,23 @@ codex plugin marketplace add hepzanechen/causal-graph-harness
 codex plugin add causal-graph-harness@causal-graph-harness
 ```
 
+**DeepSeek Harness (`dsh`)**
+
+No install command — `dsh`'s plugin concept is an installed npm package, not
+a GitHub-repo marketplace entry, so there's nothing to add. Instead, a
+`dsh` session opened anywhere under a checkout of this repo picks it up
+automatically, the same way Claude Code auto-discovers `.claude/skills/`:
+
+- `AGENTS.md` is read verbatim by `dsh`'s built-in `agent-instructions`
+  plugin (it walks from the project's `.git` root down to the session's
+  cwd loading `AGENTS.md`/`CLAUDE.md`), so the full process is already in
+  context with zero configuration.
+- The routable skill is auto-discovered from
+  [`.agents/skills/causal-graph-research/SKILL.md`](.agents/skills/causal-graph-research/SKILL.md)
+  (a symlink to [`skills/causal-graph-research/SKILL.md`](skills/causal-graph-research/SKILL.md))
+  by `dsh`'s built-in skill catalog, which only scans `.dsh/skills` and
+  `.agents/skills` — not a repo's top-level `skills/`.
+
 ### Status
 
 This is an early prototype. First real-world validation run (two fresh,
@@ -152,6 +169,21 @@ causal-graph add-fact --topic my-topic --statement "..." \
 codex plugin marketplace add hepzanechen/causal-graph-harness
 codex plugin add causal-graph-harness@causal-graph-harness
 ```
+
+**DeepSeek Harness（`dsh`）**
+
+没有安装命令——`dsh` 的插件概念是一个安装好的 npm 包，而不是 GitHub 仓库形式的
+市场条目，所以没有东西可以"添加"。相反，只要在这个仓库的某个 checkout 下打开一个
+`dsh` 会话，它就会自动被发现，方式和 Claude Code 自动发现 `.claude/skills/` 一样：
+
+- `AGENTS.md` 会被 `dsh` 内置的 `agent-instructions` 插件原样读取（它从项目的
+  `.git` 根目录一路向下走到会话的 cwd，加载 `AGENTS.md`/`CLAUDE.md`），所以完整
+  流程在零配置下就已经在上下文里了。
+- 可路由的 skill 会被 `dsh` 内置的 skill 目录从
+  [`.agents/skills/causal-graph-research/SKILL.md`](.agents/skills/causal-graph-research/SKILL.md)
+  （指向 [`skills/causal-graph-research/SKILL.md`](skills/causal-graph-research/SKILL.md) 的
+  符号链接）自动发现——它只扫描 `.dsh/skills` 和 `.agents/skills`，不扫描仓库顶层的
+  `skills/`。
 
 ### 现状
 

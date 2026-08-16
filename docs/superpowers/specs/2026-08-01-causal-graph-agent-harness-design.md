@@ -397,6 +397,18 @@ deliberately deferred (2026-08-01), in priority order the user chose:
    for the concrete design (Claude/Codex/Cursor manifests + a portable
    `causal-graph` CLI; OpenCode needs no new manifest, gemini-extension.json
    left for a later pass).
+   **Extended (2026-08-16):** DeepSeek Harness (`dsh`, released 2026-08-13)
+   needs no manifest at all — its `agent-instructions` plugin already reads
+   `AGENTS.md` directly, and its skill catalog auto-discovers
+   `.agents/skills/<name>/SKILL.md` by convention. Added a symlink at
+   `.agents/skills/causal-graph-research/` pointing at the existing
+   `skills/causal-graph-research/` directory; no new manifest format, no
+   core changes. `dsh`'s own "plugin" concept (an installed npm/Cordis
+   package via `dsh plugin add`) has no GitHub-repo-marketplace equivalent,
+   so that half of the pattern used for Claude/Codex/Cursor doesn't apply
+   here. Findings recorded as verified facts in
+   `research/agent-install-surface/` via the harness's own `causal-graph`
+   CLI.
 2. **Publish for real remote install** (PyPI for `pip install
    causal-graph-harness`, and/or a registered marketplace entry) so use
    doesn't require a local git clone.

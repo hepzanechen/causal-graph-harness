@@ -8,7 +8,12 @@ CLI — no agent SDK, no vendor-specific framework required to use it.
 get the CLI on `PATH`. Per-agent plugin manifests now exist
 (`.claude-plugin/`, `.cursor-plugin/`, `.codex-plugin/`) so Claude Code,
 Cursor, and Codex CLI can all install this repo as a plugin directly from
-GitHub — see "Install as a plugin" in [`README.md`](README.md). A real
+GitHub — see "Install as a plugin" in [`README.md`](README.md). DeepSeek
+Harness (`dsh`) needs no manifest at all: its `agent-instructions` plugin
+already reads this file directly, and `.agents/skills/causal-graph-research/`
+(a symlink to `skills/causal-graph-research/`) makes the skill auto-discovered
+by `dsh`'s own skill catalog — see the DeepSeek Harness entry under "Install
+as a plugin" in [`README.md`](README.md). A real
 package publish
 (PyPI) is still deferred until the skill/process itself is validated
 through real use — see "Future work: cross-agent distribution" in the
