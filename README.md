@@ -40,6 +40,39 @@ become high-confidence. Full rationale in
   The full fact → deduction → causal-edge → Bayesian-update flow is there
   for when a question actually needs it, not forced on every use.
 
+### Example: a layered root cause
+
+A single fact rarely explains an incident by itself. The harness's payoff shows
+up when the graph has to descend several layers before it reaches something
+worth actually fixing:
+
+```mermaid
+graph TD
+    F1["fact: checkout API returns 500s,<br/>spiking at 14:02 UTC (verified)"]
+    F2["fact: DB connection pool exhausted (verified)"]
+    D1["deduction: retry wrapper never releases<br/>the connection on timeout (inferred)"]
+    F3["fact: retry-wrapper v3 dropped the<br/>'finally: conn.release()' call (verified)"]
+
+    F1 -->|"contributes-to<br/>prior 0.3 → posterior 0.86"| F2
+    F2 -->|"caused-by<br/>prior 0.3 → posterior 0.79"| D1
+    D1 -->|"caused-by<br/>prior 0.3 → posterior 0.94<br/>falsification check recorded"| F3
+```
+
+- `F2` (pool exhaustion) is the *obvious*, easy-to-stop-at explanation — an
+  unstructured investigation would likely report it and move on.
+- The graph keeps asking "why" instead: each arrow is a
+  `propose-causal-edge` / `update-causal-edge` pair, and its posterior has to
+  be earned from actual evidence, not from how plausible the story sounds.
+- The last edge (`D1 → F3`) could not cross the high-confidence threshold
+  until `record-falsification-check` ruled out an alternative explanation (a
+  plain traffic spike) — the falsification gate described above, which is
+  what pushes the investigation past the second layer instead of settling
+  for "pool exhaustion" as the final answer.
+
+The actual root cause — a dropped `finally` block introduced three layers
+back by a dependency upgrade — is exactly what an agent that locks onto the
+first plausible explanation would never reach.
+
 ### Quick start
 
 ```bash
@@ -134,6 +167,35 @@ LLM agent 在调查问题时，往往会很快锁定一个"结论"，然后只�
   一个 skill。
 - **按需使用，非强制流程** — 一个简单问题只需要记一两条 fact 就够了。完整的
   fact → deduction → causal edge → 贝叶斯更新 流程只在问题真正需要时才会用到，不会被强加。
+
+### 示例：层层递进的根因
+
+单独一条 fact 很少能真正解释一次故障。这个 harness 真正的价值，体现在图必须往下
+钻探好几层，才能找到值得真正去修的东西：
+
+```mermaid
+graph TD
+    F1["fact: 结账接口返回 500，<br/>在 14:02 UTC 出现骤增（verified）"]
+    F2["fact: 数据库连接池耗尽（verified）"]
+    D1["deduction: 重试包装器在超时时<br/>从未释放连接（inferred）"]
+    F3["fact: 重试包装器 v3 版本漏掉了<br/>'finally: conn.release()'（verified）"]
+
+    F1 -->|"contributes-to<br/>prior 0.3 → posterior 0.86"| F2
+    F2 -->|"caused-by<br/>prior 0.3 → posterior 0.79"| D1
+    D1 -->|"caused-by<br/>prior 0.3 → posterior 0.94<br/>已记录证伪检查"| F3
+```
+
+- `F2`（连接池耗尽）是那个**显而易见、很容易就此打住**的解释——一次不带结构的
+  调查很可能报告到这里就收工了。
+- 但图会继续追问"为什么"：上面每一条箭头都对应一次 `propose-causal-edge` /
+  `update-causal-edge`，它的后验概率必须靠真实证据去挣得，而不是靠这个故事听起来
+  有多合理。
+- 最后一条边（`D1 → F3`）在 `record-falsification-check` 排除掉一个替代解释
+  （单纯的流量突增）之前，无法跨过高置信度门槛——这正是前面提到的证伪门禁，
+  它把调查推过了第二层，而不是止步于"连接池耗尽"这个表面答案。
+
+真正的根因——三层之前一次依赖升级中被漏掉的 `finally` 块——正是那种"锁定第一个
+看似合理的解释"的 agent 永远不会走到的地方。
 
 ### 快速开始
 
