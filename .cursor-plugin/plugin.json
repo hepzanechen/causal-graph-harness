@@ -1,7 +1,7 @@
 {
   "name": "causal-graph-harness",
   "displayName": "Causal Graph Harness",
-  "description": "Auditable fact/deduction graph plus a Bayesian-updated causal graph for structuring an agent's research investigation, so it doesn't lock onto an early verdict and only seek confirming evidence.",
+  "description": "Auditable causal-graph research plus an optional opportunity-scout skill that helps agents avoid premature verdicts and notice practical next moves.",
   "version": "0.1.0",
   "author": {
     "name": "Zane"
@@ -15,7 +15,8 @@
     "causal-graph",
     "bayesian",
     "falsification",
-    "agent-harness"
+    "agent-harness",
+    "opportunity-scout"
   ],
   "skills": "./skills/"
 }

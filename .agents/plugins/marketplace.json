@@ -1,7 +1,7 @@
 {
   "name": "causal-graph-harness",
   "interface": {
-    "displayName": "Causal Graph Harness"
+    "displayName": "Causal Graph Agent Harness"
   },
   "plugins": [
     {

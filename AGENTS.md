@@ -13,7 +13,9 @@ Harness (`dsh`) needs no manifest at all: its `agent-instructions` plugin
 already reads this file directly, and `.agents/skills/causal-graph-research/`
 (a symlink to `skills/causal-graph-research/`) makes the skill auto-discovered
 by `dsh`'s own skill catalog — see the DeepSeek Harness entry under "Install
-as a plugin" in [`README.md`](README.md). A real
+as a plugin" in [`README.md`](README.md). The companion
+`aha-opportunity-scout` skill is shipped from the same `skills/` directory and
+has matching Claude Code and DeepSeek discovery symlinks. A real
 package publish
 (PyPI) is still deferred until the skill/process itself is validated
 through real use — see "Future work: cross-agent distribution" in the
@@ -30,6 +32,11 @@ or model drives the investigation.
 
 Full design rationale:
 `docs/superpowers/specs/2026-08-01-causal-graph-agent-harness-design.md`.
+
+The repository also includes an optional `aha-opportunity-scout` skill. It
+looks for one evidence-based next move after a task — especially a concrete
+beginner contribution or community question — without expanding the task or
+acting externally. See [`skills/aha-opportunity-scout/SKILL.md`](skills/aha-opportunity-scout/SKILL.md).
 
 ## When to use it
 
@@ -212,6 +219,8 @@ See `README.md` for a worked end-to-end walkthrough of the first six.
 
 ## Claude Code specifically
 
-If you're running as Claude Code in this repo, `.claude/skills/causal-graph-research/SKILL.md`
-is auto-discovered and points back at this file — you don't need to do
-anything differently, the content is the same either way.
+If you're running as Claude Code in this repo, both
+`.claude/skills/causal-graph-research/SKILL.md` and
+`.claude/skills/aha-opportunity-scout/SKILL.md` are auto-discovered. The
+causal skill points back at this file for the full process; the opportunity
+scout is self-contained.

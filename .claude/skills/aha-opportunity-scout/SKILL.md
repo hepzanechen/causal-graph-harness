@@ -1,0 +1,1 @@
+../../../skills/aha-opportunity-scout/SKILL.md

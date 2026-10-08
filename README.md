@@ -3,6 +3,11 @@
 **Status: prototype, still under active development.** Interfaces, storage
 format, and process may change.
 
+This repository ships two complementary agent skills: `causal-graph-research`
+helps an agent investigate without locking onto an early explanation, while
+`aha-opportunity-scout` helps it notice one useful, evidence-based next move
+after the immediate task is complete.
+
 [English](#english) | [中文](#中文)
 
 ---
@@ -39,6 +44,21 @@ become high-confidence. Full rationale in
 - **Optional pipeline** — a simple question can stop at one or two facts.
   The full fact → deduction → causal-edge → Bayesian-update flow is there
   for when a question actually needs it, not forced on every use.
+- **Opportunity-aware** — the companion `aha-opportunity-scout` skill can
+  point a beginner toward a concrete contribution, community question,
+  documentation/test improvement, or reusable next step when the task gives
+  enough evidence. It stays optional and does not perform outreach for the
+  user.
+
+### The two skills
+
+Use [`causal-graph-research`](skills/causal-graph-research/SKILL.md) when an
+investigation could suffer from premature closure, confirmation bias, or a
+missing causal chain. Use
+[`aha-opportunity-scout`](skills/aha-opportunity-scout/SKILL.md) after a
+technical, research, or repository task when an adjacent next move may help.
+They compose naturally: the causal graph keeps the investigation honest, and
+the opportunity scout turns what was learned into a practical next action.
 
 ### Example: a layered root cause
 
@@ -111,6 +131,10 @@ codex plugin marketplace add hepzanechen/causal-graph-harness
 codex plugin add causal-graph-harness@causal-graph-harness
 ```
 
+The plugin exposes both skills from the shared `skills/` directory. They can
+also be invoked explicitly as `$causal-graph-research` and
+`$aha-opportunity-scout`.
+
 **DeepSeek Harness (`dsh`)**
 
 No install command — `dsh`'s plugin concept is an installed npm package, not
@@ -167,6 +191,17 @@ LLM agent 在调查问题时，往往会很快锁定一个"结论"，然后只�
   一个 skill。
 - **按需使用，非强制流程** — 一个简单问题只需要记一两条 fact 就够了。完整的
   fact → deduction → causal edge → 贝叶斯更新 流程只在问题真正需要时才会用到，不会被强加。
+- **能发现下一步** — 配套的 `aha-opportunity-scout` skill 会在证据充分时，
+  帮 agent 为新手指出具体的贡献、社区提问、文档/测试改进或可复用的下一步；
+  它保持可选，也不会替用户联系社区。
+
+### 两个 skill
+
+当调查可能过早收敛、受到确认偏误影响，或缺少完整因果链时，使用
+[`causal-graph-research`](skills/causal-graph-research/SKILL.md)。完成一次技术、
+研究或仓库任务后，如果可能存在有价值的相邻行动，使用
+[`aha-opportunity-scout`](skills/aha-opportunity-scout/SKILL.md)。两者可以一起使用：
+因果图让调查保持可审计，opportunity scout 把调查结果转成下一步行动。
 
 ### 示例：层层递进的根因
 
@@ -231,6 +266,9 @@ causal-graph add-fact --topic my-topic --statement "..." \
 codex plugin marketplace add hepzanechen/causal-graph-harness
 codex plugin add causal-graph-harness@causal-graph-harness
 ```
+
+这个插件会从共享的 `skills/` 目录暴露两个 skill，也可以显式调用
+`$causal-graph-research` 和 `$aha-opportunity-scout`。
 
 **DeepSeek Harness（`dsh`）**
 

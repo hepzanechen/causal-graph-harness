@@ -9,6 +9,8 @@ MANIFESTS = [
     REPO_ROOT / ".cursor-plugin" / "plugin.json",
 ]
 
+SKILL_NAMES = ("causal-graph-research", "aha-opportunity-scout")
+
 
 def test_all_manifests_are_valid_json_with_required_fields():
     for path in MANIFESTS:
@@ -26,4 +28,14 @@ def test_codex_and_cursor_manifests_point_at_the_shared_skills_dir():
         data = json.loads(path.read_text())
         skills_dir = (REPO_ROOT / data["skills"]).resolve()
         assert skills_dir == REPO_ROOT / "skills"
-        assert (skills_dir / "causal-graph-research" / "SKILL.md").is_file()
+        for skill_name in SKILL_NAMES:
+            assert (skills_dir / skill_name / "SKILL.md").is_file()
+
+
+def test_agent_discovery_links_point_at_the_shared_skill_sources():
+    for discovery_root in (REPO_ROOT / ".agents" / "skills",
+                           REPO_ROOT / ".claude" / "skills"):
+        for skill_name in SKILL_NAMES:
+            skill_link = discovery_root / skill_name / "SKILL.md"
+            assert skill_link.is_symlink()
+            assert skill_link.resolve() == REPO_ROOT / "skills" / skill_name / "SKILL.md"

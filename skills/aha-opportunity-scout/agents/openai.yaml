@@ -1,0 +1,4 @@
+interface:
+  display_name: "Aha Opportunity Scout"
+  short_description: "Find useful next moves beyond the immediate task"
+  default_prompt: "Use $aha-opportunity-scout to solve this task and surface one evidence-based next opportunity."
